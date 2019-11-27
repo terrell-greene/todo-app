@@ -1,6 +1,8 @@
 import { GraphQLServer, Options } from 'graphql-yoga'
 import { formatError } from 'apollo-errors'
 import * as mongoose from 'mongoose'
+import * as redis from 'redis'
+import * as bluebird from 'bluebird'
 import next from 'next'
 
 import { schema } from './schema'
@@ -10,6 +12,13 @@ const port = process.env.PORT || 4000
 const dev = process.env.NODE_ENV !== 'production'
 const gqlEndpoint = '/graphql'
 const playgroundEndpoint = '/playground'
+
+bluebird.promisifyAll(redis.RedisClient.prototype)
+bluebird.promisifyAll(redis.Multi.prototype)
+
+export const redisClient = redis.createClient({
+  url: process.env.REDIS_URI
+}) as any
 
 async function main() {
   try {

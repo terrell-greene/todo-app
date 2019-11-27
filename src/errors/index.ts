@@ -1,0 +1,21 @@
+import { createError } from 'apollo-errors'
+
+export const ServerError = createError('ServerError', {
+  message: 'Server error encountered'
+})
+
+export const AuthorizationError = createError('AuthorizationError', {
+  message: 'Not authorized!'
+})
+
+export const EmailScalarError = createError('Invalid Email', {
+  message: 'Expected type Email!'
+})
+
+export const PasswordScalarError = createError('Invalid Password', {
+  message: 'Expected type Password!'
+})
+
+export const SignUpError = createError('SignUpError', {
+  message: 'Signup error encountered'
+})
