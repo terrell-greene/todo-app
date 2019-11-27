@@ -10,10 +10,10 @@ export const schema = makeSchema({
   },
   typegenAutoConfig: {
     sources: [
-      // {
-      //   source: require.resolve('./db'),
-      //   alias: 'db'
-      // },
+      {
+        source: require.resolve('./db'),
+        alias: 'db'
+      },
       {
         source: require.resolve('./context'),
         alias: 'Context'
