@@ -1,5 +1,6 @@
 import { GraphQLServer, Options } from 'graphql-yoga'
 import { formatError } from 'apollo-errors'
+import * as mongoose from 'mongoose'
 import next from 'next'
 
 import { schema } from './schema'
@@ -11,6 +12,19 @@ const gqlEndpoint = '/graphql'
 const playgroundEndpoint = '/playground'
 
 async function main() {
+  try {
+    await mongoose.connect(process.env.MONGO_URI!, {
+      useUnifiedTopology: true,
+      useNewUrlParser: true,
+      useFindAndModify: false,
+      useCreateIndex: true
+    })
+
+    console.log('MongoDB Connected')
+  } catch (error) {
+    return console.error(error)
+  }
+
   const options: Options = {
     formatError,
     endpoint: gqlEndpoint,
