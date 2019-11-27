@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev  --no-notify --respawn --transpileOnly src/server"
+    "dev": "dotenv -e dockerfiles/dev/.env -- ts-node-dev --no-notify --respawn --transpileOnly src/server"
   },
   "repository": {
     "type": "git",
