@@ -1,0 +1,32 @@
+version: '3.6'
+services:
+  # API
+  app:
+    build:
+      context: .
+      dockerfile: dockerfiles/dev/Dockerfile
+    volumes:
+      - ./:/usr/src/app
+    command: npm run dev
+    working_dir: /usr/src/app
+    ports:
+      - '4000:4000'
+    depends_on:
+      - mongo
+      - redis
+    env_file:
+      - dockerfiles/dev/.env
+
+  # Mongo
+  mongo:
+    container_name: mongo
+    image: mongo
+    ports:
+      - '27017:27107'
+
+  # Redis
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - '6379:6379'

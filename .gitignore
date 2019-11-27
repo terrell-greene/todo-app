@@ -1,0 +1,3 @@
+node_modules
+dockerfiles/*/.env
+src/client/.next

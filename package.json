@@ -1,0 +1,41 @@
+{
+  "name": "todo-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node-dev  --no-notify --respawn --transpileOnly src/server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/terrell-greene/todo-app.git"
+  },
+  "keywords": [],
+  "author": "Jalen Greene",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/terrell-greene/todo-app/issues"
+  },
+  "homepage": "https://github.com/terrell-greene/todo-app#readme",
+  "devDependencies": {
+    "@types/node": "^12.12.14",
+    "@types/react": "^16.9.13",
+    "dotenv-cli": "^3.1.0",
+    "ts-node": "^8.5.2",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "^3.7.2",
+    "yarn": "^1.19.2"
+  },
+  "dependencies": {
+    "@apollo/react-hooks": "^3.1.3",
+    "@apollo/react-ssr": "^3.1.3",
+    "apollo-boost": "^0.4.4",
+    "apollo-errors": "^1.9.0",
+    "graphql-yoga": "^1.18.3",
+    "isomorphic-unfetch": "^3.0.0",
+    "next": "^9.1.4",
+    "nexus": "^0.12.0-rc.5",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
+  }
+}
