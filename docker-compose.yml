@@ -22,7 +22,7 @@ services:
     container_name: mongo
     image: mongo
     ports:
-      - '27017:27107'
+      - '27017:27017'
 
   # Redis
   redis:
