@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useLazyQuery } from '@apollo/react-hooks'
 
 import { withApollo } from '../lib/apollo'
 
@@ -9,13 +9,29 @@ const query = gql`
   }
 `
 
+const clientQuery = gql`
+  query {
+    clientTest @client
+  }
+`
+
+const getCache = gql`
+  query {
+    getCache @client
+  }
+`
+
 const IndexPage = () => {
-  const { data } = useQuery(query)
+  const api = useQuery(query)
+  const client = useQuery(clientQuery)
+  const cache = useQuery(getCache)
 
   return (
     <div>
       Hello, World!, <br />
-      {JSON.stringify(data)}
+      {api.data && api.data.hello} <br />
+      {client.data && client.data.clientTest} <br />
+      {cache.data && JSON.stringify(cache.data.getCache)}
     </div>
   )
 }

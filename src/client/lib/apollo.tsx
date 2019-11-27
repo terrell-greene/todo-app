@@ -6,6 +6,8 @@ import { InMemoryCache } from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
 import fetch from 'isomorphic-unfetch'
 
+import resolvers from './resolvers'
+
 let apolloClient = null
 
 /**
@@ -124,6 +126,9 @@ function initApolloClient(initialState) {
  * @param  {Object} [initialState={}]
  */
 function createApolloClient(initialState = {}) {
+  const cache = new InMemoryCache()
+
+  cache.writeData({ data: { auth: null } })
   // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
   return new ApolloClient({
     ssrMode: typeof window === 'undefined', // Disables forceFetch on the server (so queries are only run once)
@@ -132,6 +137,8 @@ function createApolloClient(initialState = {}) {
       credentials: 'same-origin', // Additional fetch() options like `credentials` or `headers`
       fetch
     }),
-    cache: new InMemoryCache().restore(initialState)
+    resolvers,
+    cache
+    // cache: new InMemoryCache().restore(initialState)
   })
 }
