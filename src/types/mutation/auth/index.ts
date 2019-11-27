@@ -3,9 +3,14 @@ import validator from 'validator'
 import { hash, compare } from 'bcryptjs'
 import { sign } from 'jsonwebtoken'
 
-import { SignUpError, ServerError } from '../../../errors'
+import {
+  SignUpError,
+  ServerError,
+  LoginError,
+  LogoutError
+} from '../../../errors'
 import { Token, APP_SECRET } from '../../../utils'
-import { createSession } from './auth.utils'
+import { createSession, destroySession } from './auth.utils'
 
 const { equals } = validator
 
@@ -60,9 +65,60 @@ export const Auth = extendType({
       }
     })
 
-    // t.field('login', {
-    //   type: 'AuthPayload',
-    //   resolve: async (_, args, ctx) => {}
-    // })
+    t.field('login', {
+      type: 'AuthPayload',
+      args: {
+        data: arg({ type: 'LoginInput', required: true })
+      },
+      resolve: async (_, { data }, { db }) => {
+        const { email, password } = data
+
+        const throwLoginError = () => {
+          throw new LoginError({
+            data: {
+              password: 'Invalid email/password combination'
+            }
+          })
+        }
+
+        try {
+          const user = await db.User.findOne({ email })
+
+          if (!user) throwLoginError()
+
+          const valid = await compare(password, user!.password)
+
+          if (!valid) throwLoginError()
+
+          const token = await createSession({ email, userId: user!.id })
+
+          return {
+            token,
+            user: user!
+          }
+        } catch (error) {
+          if (error.data) throw error
+
+          console.error(error)
+          throw new ServerError()
+        }
+      }
+    })
+
+    t.field('logout', {
+      type: 'Boolean',
+      resolve: async (_, args, { request }) => {
+        const {
+          body: { token }
+        } = request
+        try {
+          await destroySession(token)
+
+          return true
+        } catch (error) {
+          throw new LogoutError()
+        }
+      }
+    })
   }
 })

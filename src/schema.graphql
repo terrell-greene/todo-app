@@ -9,7 +9,15 @@ type AuthPayload {
 
 scalar Email
 
+"""Input type for logging in a user"""
+input LoginInput {
+  email: Email!
+  password: Password!
+}
+
 type Mutation {
+  login(data: LoginInput!): AuthPayload!
+  logout: Boolean!
   signup(data: SignUpInput!): AuthPayload!
 }
 

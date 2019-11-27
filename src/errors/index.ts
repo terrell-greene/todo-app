@@ -19,3 +19,11 @@ export const PasswordScalarError = createError('Invalid Password', {
 export const SignUpError = createError('SignUpError', {
   message: 'Signup error encountered'
 })
+
+export const LoginError = createError('LoginError', {
+  message: 'Login error encountered'
+})
+
+export const LogoutError = createError('LogoutError', {
+  message: 'Logout error encountered'
+})

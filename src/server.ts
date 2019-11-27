@@ -7,6 +7,7 @@ import next from 'next'
 
 import { schema } from './schema'
 import { createContext } from './context'
+import permissions from './permissions'
 
 const port = process.env.PORT || 4000
 const dev = process.env.NODE_ENV !== 'production'
@@ -41,7 +42,13 @@ async function main() {
     getEndpoint: true
   }
 
-  const server = new GraphQLServer({ schema, context: createContext })
+  const middlewares = [permissions]
+
+  const server = new GraphQLServer({
+    schema,
+    context: createContext,
+    middlewares
+  })
 
   const client = next({ dev, dir: './src/client' })
   const handle = client.getRequestHandler()
