@@ -6,5 +6,6 @@ export const User = objectType({
     t.string('id')
     t.string('name')
     t.string('email')
+    t.list.field('tasks', { type: 'Task' })
   }
 })

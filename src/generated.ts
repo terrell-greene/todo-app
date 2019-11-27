@@ -24,6 +24,9 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  CreateTaskInput: { // input type
+    description?: string | null; // String
+  }
   LoginInput: { // input type
     email: any; // Email!
     password: any; // Password!
@@ -46,10 +49,17 @@ export interface NexusGenRootTypes {
   }
   Mutation: {};
   Query: {};
+  Task: { // root type
+    completed: boolean; // Boolean!
+    description: string; // String!
+    id: string; // String!
+    rank: number; // Int!
+  }
   User: { // root type
     email: string; // String!
     id: string; // String!
     name: string; // String!
+    tasks: NexusGenRootTypes['Task'][]; // [Task!]!
   }
   String: string;
   Int: number;
@@ -61,6 +71,7 @@ export interface NexusGenRootTypes {
 }
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
+  CreateTaskInput: NexusGenInputs['CreateTaskInput'];
   LoginInput: NexusGenInputs['LoginInput'];
   SignUpInput: NexusGenInputs['SignUpInput'];
 }
@@ -71,6 +82,7 @@ export interface NexusGenFieldTypes {
     user: NexusGenRootTypes['User']; // User!
   }
   Mutation: { // field return type
+    createTask: NexusGenRootTypes['Task']; // Task!
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     logout: boolean; // Boolean!
     signup: NexusGenRootTypes['AuthPayload']; // AuthPayload!
@@ -79,15 +91,25 @@ export interface NexusGenFieldTypes {
     hello: string; // String!
     users: NexusGenRootTypes['User'][]; // [User!]!
   }
+  Task: { // field return type
+    completed: boolean; // Boolean!
+    description: string; // String!
+    id: string; // String!
+    rank: number; // Int!
+  }
   User: { // field return type
     email: string; // String!
     id: string; // String!
     name: string; // String!
+    tasks: NexusGenRootTypes['Task'][]; // [Task!]!
   }
 }
 
 export interface NexusGenArgTypes {
   Mutation: {
+    createTask: { // args
+      data: NexusGenInputs['CreateTaskInput']; // CreateTaskInput!
+    }
     login: { // args
       data: NexusGenInputs['LoginInput']; // LoginInput!
     }
@@ -102,9 +124,9 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "AuthPayload" | "Mutation" | "Query" | "User";
+export type NexusGenObjectNames = "AuthPayload" | "Mutation" | "Query" | "Task" | "User";
 
-export type NexusGenInputNames = "LoginInput" | "SignUpInput";
+export type NexusGenInputNames = "CreateTaskInput" | "LoginInput" | "SignUpInput";
 
 export type NexusGenEnumNames = never;
 

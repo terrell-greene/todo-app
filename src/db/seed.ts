@@ -5,7 +5,17 @@ const users = [
   {
     name: 'John Doe',
     email: 'johndoe@gmail.com',
-    password: '$2b$10$.1CCJBrvzuR1e17YRaMY/ubN87EFsWJ92j8dlsD4BB2fTFPUlSY4O' // 00000000
+    password: '$2b$10$.1CCJBrvzuR1e17YRaMY/ubN87EFsWJ92j8dlsD4BB2fTFPUlSY4O', // 00000000
+    tasks: [
+      {
+        rank: 1,
+        description: 'First Task'
+      },
+      {
+        rank: 2,
+        description: 'Second Task'
+      }
+    ]
   },
   {
     name: 'Jane Doe',

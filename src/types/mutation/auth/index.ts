@@ -1,7 +1,6 @@
 import { arg, extendType } from 'nexus'
 import validator from 'validator'
 import { hash, compare } from 'bcryptjs'
-import { sign } from 'jsonwebtoken'
 
 import {
   SignUpError,
@@ -9,7 +8,6 @@ import {
   LoginError,
   LogoutError
 } from '../../../errors'
-import { Token, APP_SECRET } from '../../../utils'
 import { createSession, destroySession } from './auth.utils'
 
 const { equals } = validator

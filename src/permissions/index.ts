@@ -32,6 +32,7 @@ export default shield({
   Mutation: {
     signup: not(isAuthenticated),
     login: not(isAuthenticated),
-    logout: isAuthenticated
+    logout: isAuthenticated,
+    createTask: isAuthenticated
   }
 })

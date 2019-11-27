@@ -7,6 +7,10 @@ type AuthPayload {
   user: User!
 }
 
+input CreateTaskInput {
+  description: String
+}
+
 scalar Email
 
 """Input type for logging in a user"""
@@ -16,6 +20,7 @@ input LoginInput {
 }
 
 type Mutation {
+  createTask(data: CreateTaskInput!): Task!
   login(data: LoginInput!): AuthPayload!
   logout: Boolean!
   signup(data: SignUpInput!): AuthPayload!
@@ -36,8 +41,16 @@ input SignUpInput {
   password: Password!
 }
 
+type Task {
+  completed: Boolean!
+  description: String!
+  id: String!
+  rank: Int!
+}
+
 type User {
   email: String!
   id: String!
   name: String!
+  tasks: [Task!]!
 }
