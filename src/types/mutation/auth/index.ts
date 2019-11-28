@@ -80,7 +80,10 @@ export const Auth = extendType({
         }
 
         try {
-          const user = await db.User.findOne({ email })
+          const user = await db.User.findOne({ email }).populate({
+            path: 'tasks',
+            options: { sort: { rank: 'asc' } }
+          })
 
           if (!user) throwLoginError()
 

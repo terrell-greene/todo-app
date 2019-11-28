@@ -29,7 +29,7 @@ export interface NexusGenInputs {
   }
   LoginInput: { // input type
     email: any; // Email!
-    password: any; // Password!
+    password: string; // String!
   }
   SignUpInput: { // input type
     confirmPassword: any; // Password!

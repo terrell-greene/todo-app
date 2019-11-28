@@ -16,7 +16,7 @@ scalar Email
 """Input type for logging in a user"""
 input LoginInput {
   email: Email!
-  password: Password!
+  password: String!
 }
 
 type Mutation {
