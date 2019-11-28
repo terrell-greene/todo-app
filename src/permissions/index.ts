@@ -1,20 +1,29 @@
 import { rule, shield, and, or, not } from 'graphql-shield'
+import { Request } from 'express-serve-static-core'
 
 import { Context } from '../context'
 import { redisClient } from '../server'
 import { AuthorizationError } from '../errors'
 
+const getUser = async (
+  req: Request
+): Promise<{ userId: string; token: string }> => {
+  const { authorization } = req.headers
+
+  if (!authorization) throw new AuthorizationError()
+
+  const token = authorization!.replace('Bearer ', '')
+
+  const userId = await redisClient.getAsync(token)
+
+  if (!userId) throw new AuthorizationError()
+
+  return { userId, token }
+}
+
 const isAuthenticated = rule({ cache: 'contextual' })(
-  async (parent, args, { request }: Context, info) => {
-    const { authorization } = request.headers
-
-    if (!authorization) throw new AuthorizationError()
-
-    const token = authorization!.replace('Bearer ', '')
-
-    const userId = await redisClient.getAsync(token)
-
-    if (!userId) throw new AuthorizationError()
+  async (_, args, { request }: Context) => {
+    const { token, userId } = await getUser(request)
 
     request.body = {
       ...request.body,
@@ -25,14 +34,29 @@ const isAuthenticated = rule({ cache: 'contextual' })(
   }
 )
 
+const isDeveloper = rule({ cache: 'contextual' })(
+  async (_, args, { request, db }: Context) => {
+    const { userId } = await getUser(request)
+
+    const user = await db.User.findById(userId)
+
+    if (!user || user.role !== 'DEVELOPER') throw new AuthorizationError()
+
+    return true
+  }
+)
+
 export default shield({
   Query: {
-    users: not(isAuthenticated)
+    user: isAuthenticated,
+    users: and(isAuthenticated, isDeveloper),
+    tasks: and(isAuthenticated, isDeveloper)
   },
   Mutation: {
     signup: not(isAuthenticated),
     login: not(isAuthenticated),
     logout: isAuthenticated,
-    createTask: isAuthenticated
+    createTask: isAuthenticated,
+    updateTasks: isAuthenticated
   }
 })
