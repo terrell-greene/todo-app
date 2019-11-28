@@ -1,4 +1,6 @@
 import { extendType, arg } from 'nexus'
+import { ITask } from '../../db'
+import { asyncForEach } from '../../utils'
 
 export const TaskMutation = extendType({
   type: 'Mutation',
@@ -18,15 +20,33 @@ export const TaskMutation = extendType({
 
         const rank = user!.tasks.length + 1
 
-        const updatedUser = await db.User.findByIdAndUpdate(
-          userId,
-          {
-            $push: { tasks: { rank, description } }
-          },
-          { new: true }
-        )
+        const task = await db.Task.create({ rank, description })
 
-        return updatedUser!.tasks[rank - 1]
+        await db.User.findByIdAndUpdate(userId, {
+          $push: { tasks: task }
+        })
+
+        return task
+      }
+    })
+
+    t.list.field('updateTasks', {
+      type: 'Task',
+      args: {
+        data: arg({ type: 'UpdateTasksInput', required: true })
+      },
+      resolve: async (_, { data }, { db }) => {
+        const updatedTasks: ITask[] = []
+
+        await asyncForEach(data.tasks, async task => {
+          const updatedTask = await db.Task.findByIdAndUpdate(task.id, task, {
+            new: true
+          })
+
+          updatedTasks.push(updatedTask!)
+        })
+
+        return updatedTasks
       }
     })
   }

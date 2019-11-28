@@ -24,12 +24,14 @@ type Mutation {
   login(data: LoginInput!): AuthPayload!
   logout: Boolean!
   signup(data: SignUpInput!): AuthPayload!
+  updateTasks(data: UpdateTasksInput!): [Task!]!
 }
 
 scalar Password
 
 type Query {
-  hello: String!
+  tasks: [Task!]!
+  user: User!
   users: [User!]!
 }
 
@@ -44,13 +46,24 @@ input SignUpInput {
 type Task {
   completed: Boolean!
   description: String!
-  id: String!
+  id: ID!
   rank: Int!
+}
+
+input UpdateTaskInput {
+  completed: Boolean
+  description: String
+  id: ID!
+  rank: Int
+}
+
+input UpdateTasksInput {
+  tasks: [UpdateTaskInput!]!
 }
 
 type User {
   email: String!
-  id: String!
+  id: ID!
   name: String!
   tasks: [Task!]!
 }

@@ -37,6 +37,15 @@ export interface NexusGenInputs {
     name: string; // String!
     password: any; // Password!
   }
+  UpdateTaskInput: { // input type
+    completed?: boolean | null; // Boolean
+    description?: string | null; // String
+    id: string; // ID!
+    rank?: number | null; // Int
+  }
+  UpdateTasksInput: { // input type
+    tasks: NexusGenInputs['UpdateTaskInput'][]; // [UpdateTaskInput!]!
+  }
 }
 
 export interface NexusGenEnums {
@@ -52,12 +61,12 @@ export interface NexusGenRootTypes {
   Task: { // root type
     completed: boolean; // Boolean!
     description: string; // String!
-    id: string; // String!
+    id: string; // ID!
     rank: number; // Int!
   }
   User: { // root type
     email: string; // String!
-    id: string; // String!
+    id: string; // ID!
     name: string; // String!
     tasks: NexusGenRootTypes['Task'][]; // [Task!]!
   }
@@ -74,6 +83,8 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
   CreateTaskInput: NexusGenInputs['CreateTaskInput'];
   LoginInput: NexusGenInputs['LoginInput'];
   SignUpInput: NexusGenInputs['SignUpInput'];
+  UpdateTaskInput: NexusGenInputs['UpdateTaskInput'];
+  UpdateTasksInput: NexusGenInputs['UpdateTasksInput'];
 }
 
 export interface NexusGenFieldTypes {
@@ -86,20 +97,22 @@ export interface NexusGenFieldTypes {
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     logout: boolean; // Boolean!
     signup: NexusGenRootTypes['AuthPayload']; // AuthPayload!
+    updateTasks: NexusGenRootTypes['Task'][]; // [Task!]!
   }
   Query: { // field return type
-    hello: string; // String!
+    tasks: NexusGenRootTypes['Task'][]; // [Task!]!
+    user: NexusGenRootTypes['User']; // User!
     users: NexusGenRootTypes['User'][]; // [User!]!
   }
   Task: { // field return type
     completed: boolean; // Boolean!
     description: string; // String!
-    id: string; // String!
+    id: string; // ID!
     rank: number; // Int!
   }
   User: { // field return type
     email: string; // String!
-    id: string; // String!
+    id: string; // ID!
     name: string; // String!
     tasks: NexusGenRootTypes['Task'][]; // [Task!]!
   }
@@ -116,6 +129,9 @@ export interface NexusGenArgTypes {
     signup: { // args
       data: NexusGenInputs['SignUpInput']; // SignUpInput!
     }
+    updateTasks: { // args
+      data: NexusGenInputs['UpdateTasksInput']; // UpdateTasksInput!
+    }
   }
 }
 
@@ -126,7 +142,7 @@ export interface NexusGenInheritedFields {}
 
 export type NexusGenObjectNames = "AuthPayload" | "Mutation" | "Query" | "Task" | "User";
 
-export type NexusGenInputNames = "CreateTaskInput" | "LoginInput" | "SignUpInput";
+export type NexusGenInputNames = "CreateTaskInput" | "LoginInput" | "SignUpInput" | "UpdateTaskInput" | "UpdateTasksInput";
 
 export type NexusGenEnumNames = never;
 
