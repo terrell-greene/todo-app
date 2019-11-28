@@ -3,6 +3,7 @@ import { TaskSchema, ITask } from './task.model'
 
 export interface IUser extends Document {
   id: string
+  role: 'USER' | 'DEVELOPER'
   email: string
   name: string
   password: string
@@ -10,6 +11,12 @@ export interface IUser extends Document {
 }
 
 const UserSchema: Schema = new Schema({
+  role: {
+    type: String,
+    required: true,
+    enum: ['USER', 'DEVELOPER'],
+    default: 'USER'
+  },
   email: {
     type: String,
     unique: true,
@@ -18,7 +25,7 @@ const UserSchema: Schema = new Schema({
   },
   name: { type: String, required: true },
   password: { type: String, required: true },
-  tasks: [TaskSchema]
+  tasks: [{ type: Schema.Types.ObjectId, ref: 'Task' }]
 })
 
 export const User = model<IUser>('User', UserSchema)
