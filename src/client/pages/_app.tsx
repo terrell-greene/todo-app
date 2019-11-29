@@ -3,8 +3,6 @@ import Head from 'next/head'
 import React from 'react'
 import 'antd/dist/antd.css'
 
-import { withApollo } from '../lib/apollo'
-
 class MyApp extends App {
   render() {
     const { Component, pageProps } = this.props
@@ -23,4 +21,4 @@ class MyApp extends App {
   }
 }
 
-export default withApollo(MyApp)
+export default MyApp

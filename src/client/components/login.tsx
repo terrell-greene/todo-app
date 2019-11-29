@@ -1,8 +1,11 @@
 import { NextPage } from 'next'
 import Router from 'next/router'
+import cookie from 'cookie'
 import gql from 'graphql-tag'
 import { useState } from 'react'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useApolloClient } from '@apollo/react-hooks'
+
+import redirect from '../lib/redirect'
 
 const LoginMutation = gql`
   mutation LoginMutation($email: Email!, $password: String!) {
@@ -31,6 +34,8 @@ const UpdateCache = gql`
 `
 
 const Login: NextPage = () => {
+  const client = useApolloClient()
+
   const [login] = useMutation(LoginMutation, {
     onError: error => {
       const {
@@ -40,15 +45,14 @@ const Login: NextPage = () => {
       setPasswordError(password)
     },
     onCompleted: data => {
-      Router.push('/dashboard')
-    },
-    update: async (proxy, result) => {
-      const { login } = result.data
-      const currentData = await proxy.readQuery<object>({ query: UpdateCache })
+      document.cookie = cookie.serialize('token', data.login.token, {
+        sameSite: true,
+        path: '/',
+        maxAge: 30 * 24 * 60 * 60 // 30 days
+      })
 
-      await proxy.writeQuery({
-        query: UpdateCache,
-        data: { ...currentData, token: login.token, user: login.user }
+      client.cache.reset().then(() => {
+        redirect({}, '/dashboard')
       })
     }
   })
