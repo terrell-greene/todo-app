@@ -2,6 +2,7 @@ import { queryType } from 'nexus'
 
 export const Query = queryType({
   definition(t) {
+    t.string('hello', { resolve: () => 'Hello, from the api' })
     t.field('user', {
       type: 'User',
       resolve: async (_, args, { db, request }) => {

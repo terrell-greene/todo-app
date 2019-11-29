@@ -30,6 +30,7 @@ type Mutation {
 scalar Password
 
 type Query {
+  hello: String!
   tasks: [Task!]!
   user: User!
   users: [User!]!

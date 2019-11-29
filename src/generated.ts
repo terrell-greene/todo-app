@@ -100,6 +100,7 @@ export interface NexusGenFieldTypes {
     updateTasks: NexusGenRootTypes['Task'][]; // [Task!]!
   }
   Query: { // field return type
+    hello: string; // String!
     tasks: NexusGenRootTypes['Task'][]; // [Task!]!
     user: NexusGenRootTypes['User']; // User!
     users: NexusGenRootTypes['User'][]; // [User!]!
