@@ -11,25 +11,7 @@ const LoginMutation = gql`
   mutation LoginMutation($email: Email!, $password: String!) {
     login(data: { email: $email, password: $password }) {
       token
-      user {
-        id
-        name
-        email
-        tasks {
-          id
-          rank
-          description
-          completed
-        }
-      }
     }
-  }
-`
-
-const UpdateCache = gql`
-  query {
-    token
-    user
   }
 `
 
@@ -58,13 +40,32 @@ const Login: NextPage = () => {
   })
 
   const [emailValue, setEmailValue] = useState('')
+  const [emailError, setEmailError] = useState(null)
+
   const [passwordValue, setPasswordValue] = useState('')
   const [passwordError, setPasswordError] = useState(null)
 
   const onFormSubmit = e => {
     e.preventDefault()
+    let valid = true
 
-    login({ variables: { email: emailValue, password: passwordValue } })
+    if (emailValue.trim() === '') {
+      setEmailError('Email is required')
+      valid = false
+    } else {
+      setEmailError(null)
+    }
+
+    if (passwordValue.trim() === '') {
+      setPasswordError('Password is required')
+      valid = false
+    } else {
+      setPasswordError(null)
+    }
+
+    if (valid) {
+      login({ variables: { email: emailValue, password: passwordValue } })
+    }
   }
 
   return (
@@ -76,11 +77,12 @@ const Login: NextPage = () => {
           value={emailValue}
           onChange={e => setEmailValue(e.target.value)}
         />
+        <div className="error">{emailError}</div>
       </div>
 
       <div className="input-container">
         <input
-          type="text"
+          type="password"
           placeholder="Password"
           value={passwordValue}
           onChange={e => setPasswordValue(e.target.value)}
