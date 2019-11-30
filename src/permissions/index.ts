@@ -1,4 +1,4 @@
-import { rule, shield, and, or, not } from 'graphql-shield'
+import { rule, shield, and, allow } from 'graphql-shield'
 import { Request } from 'express-serve-static-core'
 
 import { Context } from '../context'
@@ -30,6 +30,7 @@ const isAuthenticated = rule({ cache: 'contextual' })(
       token,
       userId
     }
+
     return true
   }
 )
@@ -40,23 +41,26 @@ const isDeveloper = rule({ cache: 'contextual' })(
 
     const user = await db.User.findById(userId)
 
-    if (!user || user.role !== 'DEVELOPER') throw new AuthorizationError()
+    if (!user || user.role !== 'DEVELOPER') return new AuthorizationError()
 
     return true
   }
 )
 
-export default shield({
-  Query: {
-    user: isAuthenticated,
-    users: and(isAuthenticated, isDeveloper),
-    tasks: and(isAuthenticated, isDeveloper)
+export default shield(
+  {
+    Query: {
+      user: isAuthenticated,
+      users: and(isAuthenticated, isDeveloper),
+      tasks: and(isAuthenticated, isDeveloper)
+    },
+    Mutation: {
+      signup: allow,
+      login: allow,
+      logout: isAuthenticated,
+      createTask: isAuthenticated,
+      updateTasks: isAuthenticated
+    }
   },
-  Mutation: {
-    signup: not(isAuthenticated),
-    login: not(isAuthenticated),
-    logout: isAuthenticated,
-    createTask: isAuthenticated,
-    updateTasks: isAuthenticated
-  }
-})
+  { fallbackError: new AuthorizationError() }
+)

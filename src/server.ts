@@ -17,11 +17,19 @@ const playgroundEndpoint = '/playground'
 bluebird.promisifyAll(redis.RedisClient.prototype)
 bluebird.promisifyAll(redis.Multi.prototype)
 
-export const redisClient = redis.createClient({
-  url: process.env.REDIS_URI
-}) as any
+export let redisClient: any
 
 async function main() {
+  try {
+    redisClient = redis.createClient({
+      url: process.env.REDIS_URI
+    }) as any
+
+    console.log('Redis Connected')
+  } catch (error) {
+    return console.error(error)
+  }
+
   try {
     await mongoose.connect(process.env.MONGO_URI!, {
       useUnifiedTopology: true,
@@ -66,4 +74,6 @@ async function main() {
   )
 }
 
-main()
+if (process.env.NODE_ENV !== 'test') {
+  main()
+}
