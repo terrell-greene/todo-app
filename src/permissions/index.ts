@@ -52,14 +52,17 @@ export default shield(
     Query: {
       user: isAuthenticated,
       users: and(isAuthenticated, isDeveloper),
-      tasks: and(isAuthenticated, isDeveloper)
+      tasks: and(isAuthenticated, isDeveloper),
+      categories: and(isAuthenticated, isDeveloper)
     },
     Mutation: {
       signup: allow,
       login: allow,
       logout: isAuthenticated,
       createTask: isAuthenticated,
-      updateTasks: isAuthenticated
+      updateTasks: isAuthenticated,
+      createCategory: isAuthenticated,
+      updateCategory: isAuthenticated
     }
   },
   { fallbackError: new AuthorizationError() }

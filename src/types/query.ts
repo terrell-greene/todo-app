@@ -11,8 +11,11 @@ export const Query = queryType({
         } = request
 
         const user = await db.User.findById(userId).populate({
-          path: 'tasks',
-          options: { sort: { rank: 'asc' } }
+          path: 'categories',
+          populate: {
+            path: 'tasks',
+            options: { sort: { rank: 'asc' } }
+          }
         })
 
         return user!
@@ -23,6 +26,19 @@ export const Query = queryType({
       type: 'User',
       resolve: async (_, args, ctx) => {
         return ctx.db.User.find().populate({
+          path: 'categories',
+          populate: {
+            path: 'tasks',
+            options: { sort: { rank: 'asc' } }
+          }
+        })
+      }
+    })
+
+    t.list.field('categories', {
+      type: 'Category',
+      resolve: async (_, args, ctx) => {
+        return ctx.db.Category.find().populate({
           path: 'tasks',
           options: { sort: { rank: 'asc' } }
         })
@@ -32,7 +48,7 @@ export const Query = queryType({
     t.list.field('tasks', {
       type: 'Task',
       resolve: async (_, args, ctx) => {
-        return ctx.db.Task.find()
+        return ctx.db.Task.find().sort({ rank: 'asc' })
       }
     })
   }

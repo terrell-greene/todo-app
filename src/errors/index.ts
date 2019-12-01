@@ -27,3 +27,7 @@ export const LoginError = createError('LoginError', {
 export const LogoutError = createError('LogoutError', {
   message: 'Logout error encountered'
 })
+
+export const CreateCategoryError = createError('CreateCategoryError', {
+  message: 'Create category error encountered'
+})

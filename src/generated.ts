@@ -8,6 +8,7 @@ import { core } from "nexus"
 declare global {
   interface NexusGenCustomInputMethods<TypeName extends string> {
     date<FieldName extends string>(fieldName: FieldName, opts?: core.ScalarInputFieldConfig<core.GetGen3<"inputTypes", TypeName, FieldName>>): void // "Date";
+    datetime<FieldName extends string>(fieldName: FieldName, opts?: core.ScalarInputFieldConfig<core.GetGen3<"inputTypes", TypeName, FieldName>>): void // "DateTime";
     email<FieldName extends string>(fieldName: FieldName, opts?: core.ScalarInputFieldConfig<core.GetGen3<"inputTypes", TypeName, FieldName>>): void // "Email";
     password<FieldName extends string>(fieldName: FieldName, opts?: core.ScalarInputFieldConfig<core.GetGen3<"inputTypes", TypeName, FieldName>>): void // "Password";
   }
@@ -15,6 +16,7 @@ declare global {
 declare global {
   interface NexusGenCustomOutputMethods<TypeName extends string> {
     date<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "Date";
+    datetime<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "DateTime";
     email<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "Email";
     password<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "Password";
   }
@@ -26,8 +28,13 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  CreateCategoryInput: { // input type
+    name: string; // String!
+  }
   CreateTaskInput: { // input type
-    description?: string | null; // String
+    categoryId: string; // ID!
+    date: any; // DateTime!
+    description: string; // String!
   }
   LoginInput: { // input type
     password: string; // String!
@@ -37,6 +44,10 @@ export interface NexusGenInputs {
     confirmPassword: any; // Password!
     password: any; // Password!
     username: string; // String!
+  }
+  UpdateCategoryInput: { // input type
+    categoryId: string; // ID!
+    name: string; // String!
   }
   UpdateTaskInput: { // input type
     completed?: boolean | null; // Boolean
@@ -82,14 +93,17 @@ export interface NexusGenRootTypes {
   Boolean: boolean;
   ID: string;
   Date: Date;
+  DateTime: DateTime;
   Email: any;
   Password: any;
 }
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
+  CreateCategoryInput: NexusGenInputs['CreateCategoryInput'];
   CreateTaskInput: NexusGenInputs['CreateTaskInput'];
   LoginInput: NexusGenInputs['LoginInput'];
   SignUpInput: NexusGenInputs['SignUpInput'];
+  UpdateCategoryInput: NexusGenInputs['UpdateCategoryInput'];
   UpdateTaskInput: NexusGenInputs['UpdateTaskInput'];
   UpdateTasksInput: NexusGenInputs['UpdateTasksInput'];
 }
@@ -105,13 +119,16 @@ export interface NexusGenFieldTypes {
     tasks: NexusGenRootTypes['Task'][]; // [Task!]!
   }
   Mutation: { // field return type
+    createCategory: NexusGenRootTypes['Category']; // Category!
     createTask: NexusGenRootTypes['Task']; // Task!
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     logout: boolean; // Boolean!
     signup: NexusGenRootTypes['AuthPayload']; // AuthPayload!
+    updateCategory: NexusGenRootTypes['Category']; // Category!
     updateTasks: NexusGenRootTypes['Task'][]; // [Task!]!
   }
   Query: { // field return type
+    categories: NexusGenRootTypes['Category'][]; // [Category!]!
     hello: string; // String!
     tasks: NexusGenRootTypes['Task'][]; // [Task!]!
     user: NexusGenRootTypes['User']; // User!
@@ -133,6 +150,9 @@ export interface NexusGenFieldTypes {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    createCategory: { // args
+      data: NexusGenInputs['CreateCategoryInput']; // CreateCategoryInput!
+    }
     createTask: { // args
       data: NexusGenInputs['CreateTaskInput']; // CreateTaskInput!
     }
@@ -141,6 +161,9 @@ export interface NexusGenArgTypes {
     }
     signup: { // args
       data: NexusGenInputs['SignUpInput']; // SignUpInput!
+    }
+    updateCategory: { // args
+      data: NexusGenInputs['UpdateCategoryInput']; // UpdateCategoryInput!
     }
     updateTasks: { // args
       data: NexusGenInputs['UpdateTasksInput']; // UpdateTasksInput!
@@ -155,13 +178,13 @@ export interface NexusGenInheritedFields {}
 
 export type NexusGenObjectNames = "AuthPayload" | "Category" | "Mutation" | "Query" | "Task" | "User";
 
-export type NexusGenInputNames = "CreateTaskInput" | "LoginInput" | "SignUpInput" | "UpdateTaskInput" | "UpdateTasksInput";
+export type NexusGenInputNames = "CreateCategoryInput" | "CreateTaskInput" | "LoginInput" | "SignUpInput" | "UpdateCategoryInput" | "UpdateTaskInput" | "UpdateTasksInput";
 
 export type NexusGenEnumNames = never;
 
 export type NexusGenInterfaceNames = never;
 
-export type NexusGenScalarNames = "Boolean" | "Date" | "Email" | "Float" | "ID" | "Int" | "Password" | "String";
+export type NexusGenScalarNames = "Boolean" | "Date" | "DateTime" | "Email" | "Float" | "ID" | "Int" | "Password" | "String";
 
 export type NexusGenUnionNames = never;
 

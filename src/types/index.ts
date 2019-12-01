@@ -6,6 +6,11 @@ export const GQLDate = decorateType(GraphQLDate, {
   asNexusMethod: 'date'
 })
 
+export const GQLDateTime = decorateType(GraphQLDateTime, {
+  rootTyping: 'DateTime',
+  asNexusMethod: 'datetime'
+})
+
 export * from './query'
 export * from './mutation'
 export * from './models'

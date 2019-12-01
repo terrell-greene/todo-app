@@ -1,6 +1,7 @@
 import { extendType, arg } from 'nexus'
 import { ITask } from '../../db'
 import { asyncForEach } from '../../utils'
+import { CreateCategoryError } from '../../errors'
 
 export const TaskMutation = extendType({
   type: 'Mutation',
@@ -11,18 +12,25 @@ export const TaskMutation = extendType({
         data: arg({ type: 'CreateTaskInput', required: true })
       },
       resolve: async (_, { data }, { db, request }) => {
-        const { description } = data
+        const { description, categoryId, date } = data
         const {
           body: { userId }
         } = request
 
-        const user = await db.User.findById(userId).select('tasks')
+        const category = await db.Category.findById(categoryId).select('tasks')
 
-        const rank = user!.tasks.length + 1
+        if (!category) {
+          throw new CreateCategoryError({
+            data: {
+              categoryId: "A category by that id doesn't exist"
+            }
+          })
+        }
+        const rank = category.tasks.length + 1
 
-        const task = await db.Task.create({ rank, description })
+        const task = await db.Task.create({ rank, description, date })
 
-        await db.User.findByIdAndUpdate(userId, {
+        await db.Category.findByIdAndUpdate(categoryId, {
           $push: { tasks: task }
         })
 

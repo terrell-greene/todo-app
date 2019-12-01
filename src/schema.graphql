@@ -13,8 +13,14 @@ type Category {
   tasks: [Task!]!
 }
 
+input CreateCategoryInput {
+  name: String!
+}
+
 input CreateTaskInput {
-  description: String
+  categoryId: ID!
+  date: DateTime!
+  description: String!
 }
 
 """
@@ -23,6 +29,13 @@ outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for
 representation of dates and times using the Gregorian calendar.
 """
 scalar Date
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the
+`date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO
+8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
 
 scalar Email
 
@@ -33,16 +46,19 @@ input LoginInput {
 }
 
 type Mutation {
+  createCategory(data: CreateCategoryInput!): Category!
   createTask(data: CreateTaskInput!): Task!
   login(data: LoginInput!): AuthPayload!
   logout: Boolean!
   signup(data: SignUpInput!): AuthPayload!
+  updateCategory(data: UpdateCategoryInput!): Category!
   updateTasks(data: UpdateTasksInput!): [Task!]!
 }
 
 scalar Password
 
 type Query {
+  categories: [Category!]!
   hello: String!
   tasks: [Task!]!
   user: User!
@@ -62,6 +78,11 @@ type Task {
   description: String!
   id: ID!
   rank: Int!
+}
+
+input UpdateCategoryInput {
+  categoryId: ID!
+  name: String!
 }
 
 input UpdateTaskInput {
