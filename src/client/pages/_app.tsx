@@ -1,6 +1,7 @@
 import App from 'next/app'
 import Head from 'next/head'
 import React from 'react'
+
 import 'antd/dist/antd.css'
 
 class MyApp extends App {

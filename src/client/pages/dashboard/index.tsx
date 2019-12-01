@@ -1,53 +1,97 @@
 import { NextPage } from 'next'
-import { useApolloClient, useMutation } from '@apollo/react-hooks'
-import cookie from 'cookie'
+import { Layout } from 'antd'
+import {
+  DragDropContext,
+  DropResult,
+  resetServerContext
+} from 'react-beautiful-dnd'
+import { useState } from 'react'
+import gql from 'graphql-tag'
 
 import { withApollo } from '../../lib/apollo'
 import checkLoggedIn from '../../lib/checkLoggedIn'
 import redirect from '../../lib/redirect'
 import { NexusGenRootTypes } from '../../../generated'
-import gql from 'graphql-tag'
+import Column from '../../components/column/column.component'
+
+import './dashboard.scss'
+import { useMutation } from '@apollo/react-hooks'
 
 interface DashboardPageProps {
   user: NexusGenRootTypes['User']
 }
 
-const logoutMutation = gql`
-  mutation {
-    logout
+const { Header, Content } = Layout
+
+const updateTasksMutation = gql`
+  mutation UpdateTasks($tasks: [UpdateTaskInput!]!) {
+    updateTasks(data: { tasks: $tasks }) {
+      id
+      rank
+      completed
+      description
+    }
   }
 `
 
 const DashboardPage: NextPage<DashboardPageProps> = ({ user }) => {
-  const client = useApolloClient()
-  const [logoutUser] = useMutation(logoutMutation)
+  resetServerContext()
 
-  const logout = async () => {
-    try {
-      const res = await logoutUser()
+  const [updateTasks] = useMutation(updateTasksMutation)
 
-      if (res.data.logout) {
-        document.cookie = cookie.serialize('token', '', {
-          maxAge: -1 // Expire the cookie immediately
-        })
+  const [tasks, setTasks] = useState(user.tasks)
 
-        // Force a reload of all the current queries now that the user is
-        // logged in, so we don't accidentally leave any state around.
-        client.cache.reset().then(() => {
-          // Redirect to a more useful page when signed out
-          redirect({}, '/')
-        })
-      }
-    } catch (error) {
-      console.error(error)
+  const onDragEnd = async ({ destination, source }: DropResult) => {
+    if (!destination) return
+
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return
     }
+
+    let newTasks = [...tasks]
+
+    const task = newTasks.splice(source.index, 1)[0]
+
+    task.rank = destination.index + 1
+
+    newTasks.splice(destination.index, 0, task)
+
+    if (source.index < destination.index) {
+      for (let i = destination.index - 1; i >= source.index; i--) {
+        newTasks[i].rank = newTasks[i].rank - 1
+      }
+    } else {
+      for (let i = destination.index + 1; i <= source.index; i++) {
+        newTasks[i].rank = newTasks[i].rank + 1
+      }
+    }
+
+    newTasks = newTasks.map(task => {
+      return {
+        id: task.id,
+        description: task.description,
+        completed: task.completed,
+        rank: task.rank
+      }
+    })
+
+    updateTasks({ variables: { tasks: newTasks } })
+
+    setTasks(newTasks)
   }
 
   return (
-    <div>
-      <h1>{user.name}</h1>
-      <button onClick={logout}>Sign Out</button>
-    </div>
+    <Layout>
+      <Header className="header">Hello {user.name}!</Header>
+      <Content>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Column tasks={tasks} />
+        </DragDropContext>
+      </Content>
+    </Layout>
   )
 }
 
