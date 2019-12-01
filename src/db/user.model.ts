@@ -5,7 +5,6 @@ interface IUser extends Document {
   id: string
   role: 'USER' | 'DEVELOPER'
   username: string
-  name: string
   password: string
   categories: ICategory[]
 }
@@ -23,7 +22,6 @@ const UserSchema: Schema = new Schema({
     required: true,
     lowercase: true
   },
-  name: { type: String, required: true },
   password: { type: String, required: true },
   categories: [{ type: Schema.Types.ObjectId, ref: 'Category' }]
 })

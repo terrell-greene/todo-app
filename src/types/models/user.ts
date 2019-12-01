@@ -4,8 +4,7 @@ export const User = objectType({
   name: 'User',
   definition(t) {
     t.id('id')
-    t.string('name')
-    t.string('email')
-    t.list.field('tasks', { type: 'Task' })
+    t.string('username')
+    t.list.field('categories', { type: 'Category' })
   }
 })

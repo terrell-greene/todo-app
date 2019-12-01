@@ -7,16 +7,29 @@ type AuthPayload {
   user: User!
 }
 
+type Category {
+  id: ID!
+  name: String!
+  tasks: [Task!]!
+}
+
 input CreateTaskInput {
   description: String
 }
+
+"""
+A date string, such as 2007-12-03, compliant with the `full-date` format
+outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for
+representation of dates and times using the Gregorian calendar.
+"""
+scalar Date
 
 scalar Email
 
 """Input type for logging in a user"""
 input LoginInput {
-  email: Email!
   password: String!
+  username: String!
 }
 
 type Mutation {
@@ -39,13 +52,13 @@ type Query {
 """Input type for signing up a user"""
 input SignUpInput {
   confirmPassword: Password!
-  email: Email!
-  name: String!
   password: Password!
+  username: String!
 }
 
 type Task {
   completed: Boolean!
+  date: Date!
   description: String!
   id: ID!
   rank: Int!
@@ -63,8 +76,7 @@ input UpdateTasksInput {
 }
 
 type User {
-  email: String!
+  categories: [Category!]!
   id: ID!
-  name: String!
-  tasks: [Task!]!
+  username: String!
 }

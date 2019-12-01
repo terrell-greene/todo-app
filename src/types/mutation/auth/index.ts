@@ -21,7 +21,7 @@ export const Auth = extendType({
         data: arg({ type: 'SignUpInput', required: true })
       },
       resolve: async (_, { data }, { db }) => {
-        const { name, email, password, confirmPassword } = data
+        const { username, password, confirmPassword } = data
 
         if (!equals(password, confirmPassword)) {
           throw new SignUpError({
@@ -32,12 +32,12 @@ export const Auth = extendType({
         }
 
         try {
-          const emailExist = await db.User.findOne({ email })
+          const usernameExists = await db.User.findOne({ username })
 
-          if (emailExist) {
+          if (usernameExists) {
             throw new SignUpError({
               data: {
-                email: 'Email is already in use'
+                username: 'Email is already in use'
               }
             })
           }
@@ -48,7 +48,7 @@ export const Auth = extendType({
 
           const newUser = await db.User.create(userData)
 
-          const token = await createSession({ email, userId: newUser.id })
+          const token = await createSession({ username, userId: newUser.id })
 
           return {
             token,
@@ -69,20 +69,19 @@ export const Auth = extendType({
         data: arg({ type: 'LoginInput', required: true })
       },
       resolve: async (_, { data }, { db }) => {
-        const { email, password } = data
+        const { username, password } = data
 
         const throwLoginError = () => {
           throw new LoginError({
             data: {
-              password: 'Invalid email/password combination'
+              password: 'Invalid username/password combination'
             }
           })
         }
 
         try {
-          const user = await db.User.findOne({ email }).populate({
-            path: 'tasks',
-            options: { sort: { rank: 'asc' } }
+          const user = await db.User.findOne({ username }).populate({
+            path: 'categories'
           })
 
           if (!user) throwLoginError()
@@ -91,7 +90,7 @@ export const Auth = extendType({
 
           if (!valid) throwLoginError()
 
-          const token = await createSession({ email, userId: user!.id })
+          const token = await createSession({ username, userId: user!.id })
 
           return {
             token,

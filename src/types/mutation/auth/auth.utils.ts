@@ -5,14 +5,14 @@ import { redisClient } from '../../../server'
 
 interface CreateSession {
   userId: string
-  email: string
+  username: string
 }
 
 export const createSession = async ({
-  email,
+  username,
   userId
 }: CreateSession): Promise<string> => {
-  const token = await sign({ email }, APP_SECRET)
+  const token = await sign({ username }, APP_SECRET)
 
   try {
     await redisClient.setAsync(token, userId)

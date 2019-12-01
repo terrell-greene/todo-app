@@ -7,12 +7,14 @@ import * as Context from "./context"
 import { core } from "nexus"
 declare global {
   interface NexusGenCustomInputMethods<TypeName extends string> {
+    date<FieldName extends string>(fieldName: FieldName, opts?: core.ScalarInputFieldConfig<core.GetGen3<"inputTypes", TypeName, FieldName>>): void // "Date";
     email<FieldName extends string>(fieldName: FieldName, opts?: core.ScalarInputFieldConfig<core.GetGen3<"inputTypes", TypeName, FieldName>>): void // "Email";
     password<FieldName extends string>(fieldName: FieldName, opts?: core.ScalarInputFieldConfig<core.GetGen3<"inputTypes", TypeName, FieldName>>): void // "Password";
   }
 }
 declare global {
   interface NexusGenCustomOutputMethods<TypeName extends string> {
+    date<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "Date";
     email<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "Email";
     password<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "Password";
   }
@@ -28,14 +30,13 @@ export interface NexusGenInputs {
     description?: string | null; // String
   }
   LoginInput: { // input type
-    email: any; // Email!
     password: string; // String!
+    username: string; // String!
   }
   SignUpInput: { // input type
     confirmPassword: any; // Password!
-    email: any; // Email!
-    name: string; // String!
     password: any; // Password!
+    username: string; // String!
   }
   UpdateTaskInput: { // input type
     completed?: boolean | null; // Boolean
@@ -56,25 +57,31 @@ export interface NexusGenRootTypes {
     token: string; // String!
     user: NexusGenRootTypes['User']; // User!
   }
+  Category: { // root type
+    id: string; // ID!
+    name: string; // String!
+    tasks: NexusGenRootTypes['Task'][]; // [Task!]!
+  }
   Mutation: {};
   Query: {};
   Task: { // root type
     completed: boolean; // Boolean!
+    date: any; // Date!
     description: string; // String!
     id: string; // ID!
     rank: number; // Int!
   }
   User: { // root type
-    email: string; // String!
+    categories: NexusGenRootTypes['Category'][]; // [Category!]!
     id: string; // ID!
-    name: string; // String!
-    tasks: NexusGenRootTypes['Task'][]; // [Task!]!
+    username: string; // String!
   }
   String: string;
   Int: number;
   Float: number;
   Boolean: boolean;
   ID: string;
+  Date: Date;
   Email: any;
   Password: any;
 }
@@ -92,6 +99,11 @@ export interface NexusGenFieldTypes {
     token: string; // String!
     user: NexusGenRootTypes['User']; // User!
   }
+  Category: { // field return type
+    id: string; // ID!
+    name: string; // String!
+    tasks: NexusGenRootTypes['Task'][]; // [Task!]!
+  }
   Mutation: { // field return type
     createTask: NexusGenRootTypes['Task']; // Task!
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
@@ -107,15 +119,15 @@ export interface NexusGenFieldTypes {
   }
   Task: { // field return type
     completed: boolean; // Boolean!
+    date: any; // Date!
     description: string; // String!
     id: string; // ID!
     rank: number; // Int!
   }
   User: { // field return type
-    email: string; // String!
+    categories: NexusGenRootTypes['Category'][]; // [Category!]!
     id: string; // ID!
-    name: string; // String!
-    tasks: NexusGenRootTypes['Task'][]; // [Task!]!
+    username: string; // String!
   }
 }
 
@@ -141,7 +153,7 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "AuthPayload" | "Mutation" | "Query" | "Task" | "User";
+export type NexusGenObjectNames = "AuthPayload" | "Category" | "Mutation" | "Query" | "Task" | "User";
 
 export type NexusGenInputNames = "CreateTaskInput" | "LoginInput" | "SignUpInput" | "UpdateTaskInput" | "UpdateTasksInput";
 
@@ -149,7 +161,7 @@ export type NexusGenEnumNames = never;
 
 export type NexusGenInterfaceNames = never;
 
-export type NexusGenScalarNames = "Boolean" | "Email" | "Float" | "ID" | "Int" | "Password" | "String";
+export type NexusGenScalarNames = "Boolean" | "Date" | "Email" | "Float" | "ID" | "Int" | "Password" | "String";
 
 export type NexusGenUnionNames = never;
 
