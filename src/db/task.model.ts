@@ -1,10 +1,11 @@
-import { Schema, Document, model } from 'mongoose'
+import { Schema, Document, model, Model } from 'mongoose'
 
 export interface ITask extends Document {
   id: string
   rank: number
   description: string
   completed: boolean
+  date: Date
 }
 
 export const TaskSchema: Schema = new Schema({
@@ -19,7 +20,13 @@ export const TaskSchema: Schema = new Schema({
   completed: {
     type: Boolean,
     default: false
+  },
+  date: {
+    type: Date,
+    required: true
   }
 })
+
+export type TaskModel = Model<ITask>
 
 export const Task = model<ITask>('Task', TaskSchema)

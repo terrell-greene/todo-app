@@ -1,13 +1,13 @@
-import { Schema, Document, model } from 'mongoose'
-import { TaskSchema, ITask } from './task.model'
+import { Schema, Document, model, Model } from 'mongoose'
+import { ICategory } from './category.model'
 
-export interface IUser extends Document {
+interface IUser extends Document {
   id: string
   role: 'USER' | 'DEVELOPER'
-  email: string
+  username: string
   name: string
   password: string
-  tasks: ITask[]
+  categories: ICategory[]
 }
 
 const UserSchema: Schema = new Schema({
@@ -17,7 +17,7 @@ const UserSchema: Schema = new Schema({
     enum: ['USER', 'DEVELOPER'],
     default: 'USER'
   },
-  email: {
+  username: {
     type: String,
     unique: true,
     required: true,
@@ -25,7 +25,9 @@ const UserSchema: Schema = new Schema({
   },
   name: { type: String, required: true },
   password: { type: String, required: true },
-  tasks: [{ type: Schema.Types.ObjectId, ref: 'Task' }]
+  categories: [{ type: Schema.Types.ObjectId, ref: 'Category' }]
 })
+
+export type UserModel = Model<IUser>
 
 export const User = model<IUser>('User', UserSchema)
