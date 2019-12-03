@@ -8,15 +8,13 @@ import redirect from '../lib/redirect'
 
 const SignUpMutation = gql`
   mutation SignUpMutation(
-    $name: String!
-    $email: Email!
+    $username: String!
     $password: Password!
     $confirmPassword: Password!
   ) {
     signup(
       data: {
-        name: $name
-        email: $email
+        username: $username
         password: $password
         confirmPassword: $confirmPassword
       }
@@ -32,11 +30,11 @@ const Signup: NextPage = () => {
   const [signup] = useMutation(SignUpMutation, {
     onError: error => {
       const {
-        data: { password, email }
+        data: { password, username }
       } = error.graphQLErrors[0] as any
 
       setPasswordError(password)
-      setEmailError(email)
+      setUsernameError(username)
     },
     onCompleted: data => {
       document.cookie = cookie.serialize('token', data.signup.token, {
@@ -51,11 +49,8 @@ const Signup: NextPage = () => {
     }
   })
 
-  const [nameValue, setNameValue] = useState('')
-  const [nameError, setNameError] = useState(null)
-
-  const [emailValue, setEmailValue] = useState('')
-  const [emailError, setEmailError] = useState(null)
+  const [usernameValue, setUsernameValue] = useState('')
+  const [usernameError, setUsernameError] = useState(null)
 
   const [passwordValue, setPasswordValue] = useState('')
   const [passwordError, setPasswordError] = useState(null)
@@ -67,23 +62,11 @@ const Signup: NextPage = () => {
     e.preventDefault()
     let valid = true
 
-    if (nameValue.trim() === '') {
-      setNameError('Name is required')
+    if (usernameValue.trim() === '') {
+      setUsernameError('Username is required')
       valid = false
     } else {
-      setNameError(null)
-    }
-
-    if (emailValue.trim() === '') {
-      setEmailError('Email is required')
-      valid = false
-    } else if (
-      !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(emailValue)
-    ) {
-      setEmailError('Please enter a valid email')
-      valid = false
-    } else {
-      setEmailError(null)
+      setUsernameError(null)
     }
 
     if (passwordValue.trim() === '') {
@@ -117,8 +100,7 @@ const Signup: NextPage = () => {
     if (valid) {
       signup({
         variables: {
-          name: nameValue,
-          email: emailValue,
+          username: usernameValue,
           password: passwordValue,
           confirmPassword: confirmPasswordValue
         }
@@ -131,20 +113,11 @@ const Signup: NextPage = () => {
       <div className="input-container">
         <input
           type="text"
-          placeholder="Name"
-          value={nameValue}
-          onChange={e => setNameValue(e.target.value)}
+          placeholder="username"
+          value={usernameValue}
+          onChange={e => setUsernameValue(e.target.value)}
         />
-        <div className="error">{nameError}</div>
-      </div>
-      <div className="input-container">
-        <input
-          type="text"
-          placeholder="Email"
-          value={emailValue}
-          onChange={e => setEmailValue(e.target.value)}
-        />
-        <div className="error">{emailError}</div>
+        <div className="error">{usernameError}</div>
       </div>
 
       <div className="input-container">

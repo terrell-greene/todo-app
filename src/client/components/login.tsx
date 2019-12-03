@@ -8,8 +8,8 @@ import { useMutation, useApolloClient } from '@apollo/react-hooks'
 import redirect from '../lib/redirect'
 
 const LoginMutation = gql`
-  mutation LoginMutation($email: Email!, $password: String!) {
-    login(data: { email: $email, password: $password }) {
+  mutation LoginMutation($username: String!, $password: String!) {
+    login(data: { username: $username, password: $password }) {
       token
     }
   }
@@ -39,8 +39,8 @@ const Login: NextPage = () => {
     }
   })
 
-  const [emailValue, setEmailValue] = useState('')
-  const [emailError, setEmailError] = useState(null)
+  const [usernameValue, setUsernameValue] = useState('')
+  const [usernameError, setUsernameError] = useState(null)
 
   const [passwordValue, setPasswordValue] = useState('')
   const [passwordError, setPasswordError] = useState(null)
@@ -49,11 +49,11 @@ const Login: NextPage = () => {
     e.preventDefault()
     let valid = true
 
-    if (emailValue.trim() === '') {
-      setEmailError('Email is required')
+    if (usernameValue.trim() === '') {
+      setUsernameError('username is required')
       valid = false
     } else {
-      setEmailError(null)
+      setUsernameError(null)
     }
 
     if (passwordValue.trim() === '') {
@@ -64,7 +64,7 @@ const Login: NextPage = () => {
     }
 
     if (valid) {
-      login({ variables: { email: emailValue, password: passwordValue } })
+      login({ variables: { username: usernameValue, password: passwordValue } })
     }
   }
 
@@ -73,11 +73,11 @@ const Login: NextPage = () => {
       <div className="input-container">
         <input
           type="text"
-          placeholder="Email"
-          value={emailValue}
-          onChange={e => setEmailValue(e.target.value)}
+          placeholder="Username"
+          value={usernameValue}
+          onChange={e => setUsernameValue(e.target.value)}
         />
-        <div className="error">{emailError}</div>
+        <div className="error">{usernameError}</div>
       </div>
 
       <div className="input-container">
