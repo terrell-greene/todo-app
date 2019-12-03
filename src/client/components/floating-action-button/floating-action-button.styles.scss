@@ -1,0 +1,73 @@
+@import '../../sass/main.scss';
+
+.floating-action-button {
+  position: absolute;
+  bottom: 50px;
+  right: 75px;
+  cursor: pointer;
+
+  .icon {
+    font-size: 3rem;
+  }
+}
+
+.option:first-of-type {
+  margin-bottom: 1rem;
+}
+
+.option {
+  cursor: pointer;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+
+  @include for-size('desktop-up') {
+    margin-bottom: 1.8rem;
+  }
+}
+
+.error {
+  // margin-top: 0.5rem;
+  color: red;
+  font-size: 1rem;
+
+  @include for-size('tablet-portrait-up') {
+    font-size: 0.75rem;
+    margin-top: 0.3rem;
+  }
+
+  @include for-size('tablet-landscape-up') {
+    font-size: 1rem;
+  }
+
+  @include for-size('desktop-up') {
+    font-size: 1.3rem;
+  }
+}
+
+input {
+  background-color: $color-white;
+  border: 0.2rem solid $color-grey;
+  border-radius: 0.5rem;
+  padding: 0.25rem;
+  outline: none;
+
+  @include for-size('tablet-portrait-up') {
+    font-size: 1rem;
+    padding: 0.4rem;
+  }
+
+  @include for-size('tablet-landscape-up') {
+    font-size: 1.2rem;
+    padding: 0.5rem;
+  }
+
+  @include for-size('desktop-up') {
+    border-radius: 1rem;
+    padding: 0.75rem;
+    font-size: 1.6rem;
+  }
+}
