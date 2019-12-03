@@ -1,0 +1,32 @@
+@import '../../sass/main';
+
+.task-list-item {
+  padding: 1.5rem;
+  border-bottom: 1px solid $color-grey;
+  background-color: $color-white;
+  display: flex;
+  align-items: center;
+
+  .completed {
+    text-decoration: line-through;
+  }
+
+  .icon {
+    margin-right: 1rem;
+
+    font-size: 3.2rem;
+  }
+
+  .description,
+  .category-name {
+    display: block;
+  }
+
+  .description {
+    font-size: 2rem;
+  }
+
+  .category-name {
+    font-size: 1.25rem;
+  }
+}
