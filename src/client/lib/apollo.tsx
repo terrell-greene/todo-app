@@ -154,7 +154,10 @@ function createApolloClient(initialState = {}, { getToken }) {
   }
 
   const httpLink = new HttpLink({
-    uri: 'http://localhost:4000/graphql', // Server URL (must be absolute)
+    uri:
+      process.env.NODE_ENV === 'production'
+        ? 'http://todo.jalengreene.com/graphql'
+        : 'http://localhost:4000/graphql', // Server URL (must be absolute)
     credentials: 'same-origin',
     fetch,
     fetchOptions

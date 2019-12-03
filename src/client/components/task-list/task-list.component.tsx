@@ -6,10 +6,10 @@ import { IClientTask } from '../../utils'
 import { useMutation } from '@apollo/react-hooks'
 import { NexusGenRootTypes } from '../../../generated'
 import { userCache } from '../../pages/dashboard'
+import moment from 'moment'
 
 interface TaskListProps {
   tasks: IClientTask[]
-  updateUser: (user: NexusGenRootTypes['User']) => void
 }
 
 const updateTasksMutation = gql`
@@ -19,11 +19,12 @@ const updateTasksMutation = gql`
       rank
       completed
       description
+      date
     }
   }
 `
 
-const TaskList: React.FC<TaskListProps> = ({ tasks, updateUser }) => {
+const TaskList: React.FC<TaskListProps> = ({ tasks }) => {
   const [updateTasks] = useMutation(updateTasksMutation, {
     update: async (proxy, { data }) => {
       const { user } = await proxy.readQuery<{
@@ -37,8 +38,6 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, updateUser }) => {
           }
         })
       })
-
-      updateUser(user)
     }
   })
 
@@ -49,12 +48,12 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, updateUser }) => {
   }
 
   return (
-    <ul>
+    <div>
       {tasks.map(task => {
         const { id, completed } = task
 
         return (
-          <li key={id} className="task-list-item">
+          <div key={id} className="task-list-item">
             {completed ? (
               <Icon
                 className="icon completed"
@@ -76,12 +75,24 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, updateUser }) => {
               <span className={`description ${completed ? 'completed' : ''}`}>
                 {task.description}
               </span>
-              <span className="category-name">{task.categoryName}</span>
+              <span className="category-name">
+                {task.categoryName} - {moment(task.date).format('MM/DD/YYYY')}
+              </span>
             </div>
-          </li>
+
+            <div style={{ marginLeft: 'auto' }}>
+              <Icon className="icon small" type="edit" theme="twoTone" />
+              <Icon
+                className="icon small "
+                type="delete"
+                theme="twoTone"
+                twoToneColor="#eb2f96"
+              />
+            </div>
+          </div>
         )
       })}
-    </ul>
+    </div>
   )
 }
 

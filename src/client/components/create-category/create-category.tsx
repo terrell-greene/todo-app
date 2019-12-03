@@ -24,14 +24,10 @@ const createCategoryMutation = gql`
 interface CreateCategoryProps {
   visible: boolean
   close: () => void
-  updateUser: (user: any) => void
 }
 
-const CreateCategory: React.FC<CreateCategoryProps> = ({
-  visible,
-  close,
-  updateUser
-}) => {
+const CreateCategory: React.FC<CreateCategoryProps> = ({ visible, close }) => {
+  const client = useApolloClient()
   const [categoryName, setCategoryName] = useState('')
   const [error, setError] = useState(null)
 
@@ -43,7 +39,9 @@ const CreateCategory: React.FC<CreateCategoryProps> = ({
 
       user.categories.push(data.createCategory)
 
-      updateUser(user)
+      proxy.writeQuery({ query: userCache, data: { user } })
+
+      // updateUser(user)
     }
   })
 
@@ -71,6 +69,7 @@ const CreateCategory: React.FC<CreateCategoryProps> = ({
       confirmLoading={loading}
       onCancel={close}
       okText="Submit"
+      forceRender={true}
     >
       <div className="input-container">
         <input

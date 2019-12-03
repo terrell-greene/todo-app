@@ -18,6 +18,8 @@ const createTaskMutation = gql`
     createTask(
       data: { description: $description, categoryId: $categoryId, date: $date }
     ) {
+      id
+      date
       description
       completed
       rank
@@ -28,21 +30,21 @@ const createTaskMutation = gql`
 interface CreateTaskProps {
   visible: boolean
   close: () => void
-  updateUser: (user: NexusGenRootTypes['User']) => void
   categories: NexusGenRootTypes['Category'][]
 }
 
 const CreateTask: React.FC<CreateTaskProps> = ({
   visible,
   close,
-  updateUser,
   categories
 }) => {
   const [descriptionValue, setDescriptionValue] = useState('')
   const [descriptionError, setDescriptionError] = useState(null)
 
   const [date, setDate] = useState(new Date())
-  const [categoryId, setCategoryId] = useState(categories[0].id)
+  const [categoryId, setCategoryId] = useState(
+    categories.length > 0 ? categories[0].id : null
+  )
 
   const [createTask, { loading }] = useMutation(createTaskMutation, {
     update: async (proxy, { data }) => {
@@ -55,8 +57,6 @@ const CreateTask: React.FC<CreateTaskProps> = ({
           user.categories[index].tasks.push(data.createTask)
         }
       })
-
-      updateUser(user)
     }
   })
 
@@ -97,7 +97,6 @@ const CreateTask: React.FC<CreateTaskProps> = ({
           size="large"
           value={moment(date)}
           onChange={(moment, date) => setDate(new Date(date))}
-          //   defaultValue={moment(date)}
           format={'MM-DD-YYYY'}
         />
       </div>

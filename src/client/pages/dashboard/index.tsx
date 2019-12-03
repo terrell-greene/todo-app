@@ -16,7 +16,7 @@ import { NexusGenRootTypes } from '../../../generated'
 
 import './dashboard.scss'
 import TaskList from '../../components/task-list/task-list.component'
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery, useApolloClient } from '@apollo/react-hooks'
 import Sidebar from '../../components/sidebar/sidebar.component'
 import { IClientTask } from '../../utils'
 import FloatingActionButton from '../../components/floating-action-button/floating-action-button.component'
@@ -58,21 +58,28 @@ export const userCache = gql`
   }
 `
 
-const DashboardPage: NextPage<DashboardPageProps> = props => {
+const DashboardPage: NextPage<DashboardPageProps> = ({ user }) => {
   // resetServerContext()
+
+  const client = useApolloClient()
+
+  // useEffect(() => {
+  //   const subscription = client
+  //     .watchQuery({ query: userCache })
+  //     .subscribe(({ data }) => {
+  //       setUser(data.user)
+  //     })
+  //   return () => {
+  //     subscription.unsubscribe()
+  //   }
+  // }, [])
 
   const { query } = useRouter()
 
-  const [user, setUser] = useState(props.user)
-
   const [allTasks, setAllTasks] = useState<IClientTask[]>([])
 
-  const [updateTasks] = useMutation(updateTasksMutation, {
-    onError: error => console.error(JSON.stringify(error))
-  })
-
   useEffect(() => {
-    const newTasks: IClientTask[] = []
+    let newTasks: IClientTask[] = []
     const { categoryId } = query
 
     user.categories.forEach(({ id, name, tasks }) => {
@@ -81,14 +88,15 @@ const DashboardPage: NextPage<DashboardPageProps> = props => {
       tasks.forEach(task => newTasks.push({ ...task, categoryName: name }))
     })
 
+    newTasks = newTasks.sort((a, b) => {
+      const newA = new Date(a.date)
+      const newB = new Date(b.date)
+
+      return newA > newB ? 1 : newA < newB ? -1 : 0
+    })
+    // console.log(newTasks)
     setAllTasks(newTasks)
   }, [user, query])
-
-  const updateCompleted = (id: string, completed: boolean) => {
-    const task = { id, completed: !completed }
-
-    updateTasks({ variables: { tasks: [task] } })
-  }
 
   return (
     <Layout>
@@ -97,7 +105,7 @@ const DashboardPage: NextPage<DashboardPageProps> = props => {
       <Layout className="layout">
         <Header className="header"></Header>
         <Content className="content">
-          <TaskList updateUser={setUser} tasks={allTasks} />
+          <TaskList tasks={allTasks} />
         </Content>
         <Footer>
           <a href="https://www.freepik.com/free-photos-vectors/background">
@@ -106,7 +114,7 @@ const DashboardPage: NextPage<DashboardPageProps> = props => {
         </Footer>
       </Layout>
 
-      <FloatingActionButton categories={user.categories} updateUser={setUser} />
+      <FloatingActionButton categories={user.categories} />
     </Layout>
   )
 }

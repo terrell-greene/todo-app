@@ -7,12 +7,10 @@ import CreateTask from '../create-task/create-task'
 import { NexusGenRootTypes } from '../../../generated'
 
 interface FloatingActionButtonProps {
-  updateUser: (user: NexusGenRootTypes['User']) => void
   categories: NexusGenRootTypes['Category'][]
 }
 
 const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
-  updateUser,
   categories
 }) => {
   const [hovered, setHovered] = useState(false)
@@ -59,13 +57,11 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
         <CreateCategory
           visible={createCategoryVisible}
           close={() => setCreateCategoryVisible(false)}
-          updateUser={updateUser}
         />
         <CreateTask
           categories={categories}
           visible={createTaskVisible}
           close={() => setCreateTaskVisible(false)}
-          updateUser={updateUser}
         />
 
         <Modal
