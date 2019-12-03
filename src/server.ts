@@ -58,7 +58,10 @@ async function main() {
     middlewares
   })
 
-  const client = next({ dev, dir: './src/client' })
+  const clientDir =
+    process.env.NODE_ENV === 'development' ? './src/client' : './client'
+
+  const client = next({ dev, dir: clientDir })
   const handle = client.getRequestHandler()
   client.prepare()
 

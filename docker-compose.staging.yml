@@ -1,0 +1,30 @@
+version: '3.6'
+services:
+  #Server
+  server:
+    build:
+      context: .
+      dockerfile: dockerfiles/staging/Dockerfile
+    command: node server
+    working_dir: /usr/src/app
+    ports:
+      - '80:4000'
+    depends_on:
+      - mongo
+      - redis
+    env_file:
+      - dockerfiles/staging/.env
+
+  # Mongo
+  mongo:
+    container_name: mongo
+    image: mongo
+    ports:
+      - '27017:27017'
+
+  # Redis
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - '6379:6379'
