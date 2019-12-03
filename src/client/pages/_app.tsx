@@ -14,9 +14,7 @@ class MyApp extends App {
           <title>Todo App</title>
         </Head>
 
-        {/* <Layout route="/reviews"> */}
         <Component {...pageProps} />
-        {/* </Layout> */}
       </React.Fragment>
     )
   }

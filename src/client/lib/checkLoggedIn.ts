@@ -8,13 +8,17 @@ const userQuery = gql`
   query getUser {
     user {
       id
-      name
-      email
-      tasks {
+      username
+      categories {
         id
-        rank
-        description
-        completed
+        name
+        tasks {
+          id
+          date
+          description
+          rank
+          completed
+        }
       }
     }
   }

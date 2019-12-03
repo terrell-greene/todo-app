@@ -1,27 +1,31 @@
 import { NextPage } from 'next'
-import { Layout } from 'antd'
+import { Layout, Popover } from 'antd'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import {
   DragDropContext,
   DropResult,
   resetServerContext
 } from 'react-beautiful-dnd'
-import { useState } from 'react'
 import gql from 'graphql-tag'
 
 import { withApollo } from '../../lib/apollo'
 import checkLoggedIn from '../../lib/checkLoggedIn'
 import redirect from '../../lib/redirect'
 import { NexusGenRootTypes } from '../../../generated'
-import Column from '../../components/column/column.component'
 
 import './dashboard.scss'
-import { useMutation } from '@apollo/react-hooks'
+import TaskList from '../../components/task-list/task-list.component'
+import { useMutation, useQuery } from '@apollo/react-hooks'
+import Sidebar from '../../components/sidebar/sidebar.component'
+import { IClientTask } from '../../utils'
+import FloatingActionButton from '../../components/floating-action-button/floating-action-button.component'
 
 interface DashboardPageProps {
   user: NexusGenRootTypes['User']
 }
 
-const { Header, Content } = Layout
+const { Header, Content, Sider, Footer } = Layout
 
 const updateTasksMutation = gql`
   mutation UpdateTasks($tasks: [UpdateTaskInput!]!) {
@@ -34,63 +38,75 @@ const updateTasksMutation = gql`
   }
 `
 
-const DashboardPage: NextPage<DashboardPageProps> = ({ user }) => {
-  resetServerContext()
-
-  const [updateTasks] = useMutation(updateTasksMutation)
-
-  const [tasks, setTasks] = useState(user.tasks)
-
-  const onDragEnd = async ({ destination, source }: DropResult) => {
-    if (!destination) return
-
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    ) {
-      return
-    }
-
-    let newTasks = [...tasks]
-
-    const task = newTasks.splice(source.index, 1)[0]
-
-    task.rank = destination.index + 1
-
-    newTasks.splice(destination.index, 0, task)
-
-    if (source.index < destination.index) {
-      for (let i = destination.index - 1; i >= source.index; i--) {
-        newTasks[i].rank = newTasks[i].rank - 1
-      }
-    } else {
-      for (let i = destination.index + 1; i <= source.index; i++) {
-        newTasks[i].rank = newTasks[i].rank + 1
+export const userCache = gql`
+  query {
+    user {
+      id
+      username
+      categories {
+        id
+        name
+        tasks {
+          id
+          date
+          description
+          rank
+          completed
+        }
       }
     }
+  }
+`
 
-    newTasks = newTasks.map(task => {
-      return {
-        id: task.id,
-        description: task.description,
-        completed: task.completed,
-        rank: task.rank
-      }
+const DashboardPage: NextPage<DashboardPageProps> = props => {
+  // resetServerContext()
+
+  const { query } = useRouter()
+
+  const [user, setUser] = useState(props.user)
+
+  const [allTasks, setAllTasks] = useState<IClientTask[]>([])
+
+  const [updateTasks] = useMutation(updateTasksMutation, {
+    onError: error => console.error(JSON.stringify(error))
+  })
+
+  useEffect(() => {
+    const newTasks: IClientTask[] = []
+    const { categoryId } = query
+
+    user.categories.forEach(({ id, name, tasks }) => {
+      if (categoryId && id !== categoryId) return
+
+      tasks.forEach(task => newTasks.push({ ...task, categoryName: name }))
     })
 
-    updateTasks({ variables: { tasks: newTasks } })
+    setAllTasks(newTasks)
+  }, [user, query])
 
-    setTasks(newTasks)
+  const updateCompleted = (id: string, completed: boolean) => {
+    const task = { id, completed: !completed }
+
+    updateTasks({ variables: { tasks: [task] } })
   }
 
   return (
     <Layout>
-      <Header className="header">Hello {user.name}!</Header>
-      <Content>
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Column tasks={tasks} />
-        </DragDropContext>
-      </Content>
+      <Sidebar categories={user.categories} />
+
+      <Layout className="layout">
+        <Header className="header"></Header>
+        <Content className="content">
+          <TaskList updateUser={setUser} tasks={allTasks} />
+        </Content>
+        <Footer>
+          <a href="https://www.freepik.com/free-photos-vectors/background">
+            Background vector created by freepik - www.freepik.com
+          </a>
+        </Footer>
+      </Layout>
+
+      <FloatingActionButton categories={user.categories} updateUser={setUser} />
     </Layout>
   )
 }
