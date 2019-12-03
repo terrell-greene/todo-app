@@ -1,0 +1,19 @@
+@import '../../sass/main';
+
+.sider {
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  // width: 450px;
+  // position: fixed;
+  // left: 0;
+  background-color: white !important;
+
+  .calendar-container {
+    margin-top: auto;
+    padding-bottom: 1rem;
+    width: 100%;
+    border-top: 1px solid $color-grey;
+  }
+}
