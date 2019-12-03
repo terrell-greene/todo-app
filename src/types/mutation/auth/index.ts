@@ -37,7 +37,7 @@ export const Auth = extendType({
           if (usernameExists) {
             throw new SignUpError({
               data: {
-                username: 'Email is already in use'
+                username: 'Username is already in use'
               }
             })
           }
