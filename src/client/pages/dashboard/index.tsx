@@ -1,42 +1,26 @@
 import { NextPage } from 'next'
-import { Layout, Popover } from 'antd'
+import { Layout } from 'antd'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import {
-  DragDropContext,
-  DropResult,
-  resetServerContext
-} from 'react-beautiful-dnd'
 import gql from 'graphql-tag'
+import { useQuery } from '@apollo/react-hooks'
 
 import { withApollo } from '../../lib/apollo'
 import checkLoggedIn from '../../lib/checkLoggedIn'
 import redirect from '../../lib/redirect'
 import { NexusGenRootTypes } from '../../../generated'
-
-import './dashboard.scss'
-import TaskList from '../../components/task-list/task-list.component'
-import { useMutation, useQuery, useApolloClient } from '@apollo/react-hooks'
 import Sidebar from '../../components/sidebar/sidebar.component'
 import { IClientTask } from '../../utils'
 import FloatingActionButton from '../../components/floating-action-button/floating-action-button.component'
+import Task from '../../components/task/task.component'
+
+import './dashboard.scss'
 
 interface DashboardPageProps {
   user: NexusGenRootTypes['User']
 }
 
-const { Header, Content, Sider, Footer } = Layout
-
-const updateTasksMutation = gql`
-  mutation UpdateTasks($tasks: [UpdateTaskInput!]!) {
-    updateTasks(data: { tasks: $tasks }) {
-      id
-      rank
-      completed
-      description
-    }
-  }
-`
+const { Header, Content, Footer } = Layout
 
 export const userCache = gql`
   query {
@@ -85,7 +69,7 @@ const DashboardPage: NextPage<DashboardPageProps> = () => {
     })
 
     setFilteredTasks(newTasks)
-  }, [query])
+  }, [user, query])
 
   return (
     <Layout>
@@ -94,7 +78,9 @@ const DashboardPage: NextPage<DashboardPageProps> = () => {
       <Layout className="layout">
         <Header className="header"></Header>
         <Content className="content">
-          <TaskList tasks={filteredTasks} />
+          {filteredTasks.map(task => (
+            <Task key={task.id} task={task} />
+          ))}
         </Content>
         <Footer>
           <a href="https://www.freepik.com/free-photos-vectors/background">

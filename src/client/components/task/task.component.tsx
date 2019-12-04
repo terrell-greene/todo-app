@@ -1,31 +1,86 @@
 import { NextPage } from 'next'
-import { Draggable } from 'react-beautiful-dnd'
+import { useState } from 'react'
+import { useMutation } from '@apollo/react-hooks'
+import { Icon, Button } from 'antd'
+import moment from 'moment'
+import gql from 'graphql-tag'
 
-import { NexusGenRootTypes } from '../../../generated'
+import { IClientTask } from '../../utils'
+import EditTask from '../edit-task/edit-task.component'
 
 import './task.styles.scss'
 
 interface TaskProps {
-  index: number
-  task: NexusGenRootTypes['Task']
+  task: IClientTask
 }
 
-const Task: NextPage<TaskProps> = ({ task, index }) => {
+const updateTasksMutation = gql`
+  mutation UpdateTasks($tasks: [UpdateTaskInput!]!) {
+    updateTasks(data: { tasks: $tasks }) {
+      id
+      rank
+      completed
+      description
+      date
+    }
+  }
+`
+
+const Task: NextPage<TaskProps> = ({ task }) => {
+  const { id, completed } = task
+  const [updateTasks] = useMutation(updateTasksMutation)
+  const [editTaskVisible, setEditTaskVisible] = useState(false)
+
+  const updateComplete = () => {
+    const task = { id, completed: !completed }
+
+    updateTasks({ variables: { tasks: [task] } })
+  }
+
   return (
-    <Draggable draggableId={task.id} index={index}>
-      {provider => {
-        return (
-          <div
-            className="task-container"
-            {...provider.draggableProps}
-            {...provider.dragHandleProps}
-            ref={provider.innerRef}
-          >
-            {task.description}
-          </div>
-        )
-      }}
-    </Draggable>
+    <div className="task-list-item">
+      {completed ? (
+        <Icon
+          className="icon completed"
+          type="check-circle"
+          theme="twoTone"
+          twoToneColor="#52c41a"
+          onClick={updateComplete}
+        />
+      ) : (
+        <Button
+          className="icon"
+          size="default"
+          shape="circle"
+          onClick={updateComplete}
+        />
+      )}
+
+      <div>
+        <span className={`description ${completed ? 'completed' : ''}`}>
+          {task.description}
+        </span>
+        <span className="category-name">
+          {task.categoryName} -{' '}
+          {moment(new Date(task.date)).format('MM/DD/YYYY')}
+        </span>
+      </div>
+
+      <div style={{ marginLeft: 'auto' }}>
+        <Icon
+          onClick={() => setEditTaskVisible(true)}
+          className="icon small"
+          type="edit"
+          theme="twoTone"
+        />
+      </div>
+
+      <EditTask
+        task={task}
+        visible={editTaskVisible}
+        close={() => setEditTaskVisible(false)}
+      />
+    </div>
   )
 }
 
