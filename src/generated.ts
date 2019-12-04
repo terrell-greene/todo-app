@@ -36,6 +36,10 @@ export interface NexusGenInputs {
     date: any; // DateTime!
     description: string; // String!
   }
+  DeleteTaskInput: { // input type
+    categoryId: string; // ID!
+    taskId: string; // ID!
+  }
   LoginInput: { // input type
     password: string; // String!
     username: string; // String!
@@ -101,6 +105,7 @@ export interface NexusGenRootTypes {
 export interface NexusGenAllTypes extends NexusGenRootTypes {
   CreateCategoryInput: NexusGenInputs['CreateCategoryInput'];
   CreateTaskInput: NexusGenInputs['CreateTaskInput'];
+  DeleteTaskInput: NexusGenInputs['DeleteTaskInput'];
   LoginInput: NexusGenInputs['LoginInput'];
   SignUpInput: NexusGenInputs['SignUpInput'];
   UpdateCategoryInput: NexusGenInputs['UpdateCategoryInput'];
@@ -121,6 +126,7 @@ export interface NexusGenFieldTypes {
   Mutation: { // field return type
     createCategory: NexusGenRootTypes['Category']; // Category!
     createTask: NexusGenRootTypes['Task']; // Task!
+    deleteTask: boolean; // Boolean!
     login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     logout: boolean; // Boolean!
     signup: NexusGenRootTypes['AuthPayload']; // AuthPayload!
@@ -156,6 +162,9 @@ export interface NexusGenArgTypes {
     createTask: { // args
       data: NexusGenInputs['CreateTaskInput']; // CreateTaskInput!
     }
+    deleteTask: { // args
+      data: NexusGenInputs['DeleteTaskInput']; // DeleteTaskInput!
+    }
     login: { // args
       data: NexusGenInputs['LoginInput']; // LoginInput!
     }
@@ -178,7 +187,7 @@ export interface NexusGenInheritedFields {}
 
 export type NexusGenObjectNames = "AuthPayload" | "Category" | "Mutation" | "Query" | "Task" | "User";
 
-export type NexusGenInputNames = "CreateCategoryInput" | "CreateTaskInput" | "LoginInput" | "SignUpInput" | "UpdateCategoryInput" | "UpdateTaskInput" | "UpdateTasksInput";
+export type NexusGenInputNames = "CreateCategoryInput" | "CreateTaskInput" | "DeleteTaskInput" | "LoginInput" | "SignUpInput" | "UpdateCategoryInput" | "UpdateTaskInput" | "UpdateTasksInput";
 
 export type NexusGenEnumNames = never;
 

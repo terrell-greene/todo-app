@@ -62,7 +62,8 @@ export default shield(
       createTask: isAuthenticated,
       updateTasks: isAuthenticated,
       createCategory: isAuthenticated,
-      updateCategory: isAuthenticated
+      updateCategory: isAuthenticated,
+      deleteTask: isAuthenticated
     }
   },
   { fallbackError: new AuthorizationError() }

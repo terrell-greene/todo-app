@@ -37,6 +37,11 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the
 """
 scalar DateTime
 
+input DeleteTaskInput {
+  categoryId: ID!
+  taskId: ID!
+}
+
 scalar Email
 
 """Input type for logging in a user"""
@@ -48,6 +53,7 @@ input LoginInput {
 type Mutation {
   createCategory(data: CreateCategoryInput!): Category!
   createTask(data: CreateTaskInput!): Task!
+  deleteTask(data: DeleteTaskInput!): Boolean!
   login(data: LoginInput!): AuthPayload!
   logout: Boolean!
   signup(data: SignUpInput!): AuthPayload!

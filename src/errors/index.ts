@@ -31,3 +31,7 @@ export const LogoutError = createError('LogoutError', {
 export const CreateCategoryError = createError('CreateCategoryError', {
   message: 'Create category error encountered'
 })
+
+export const DeleteTaskError = createError('DeleteTaskError', {
+  message: 'Delete task error encountered'
+})

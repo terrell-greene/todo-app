@@ -1,7 +1,7 @@
 import { extendType, arg } from 'nexus'
 import { ITask } from '../../db'
 import { asyncForEach } from '../../utils'
-import { CreateCategoryError } from '../../errors'
+import { CreateCategoryError, DeleteTaskError } from '../../errors'
 
 export const TaskMutation = extendType({
   type: 'Mutation',
@@ -55,6 +55,28 @@ export const TaskMutation = extendType({
         })
 
         return updatedTasks
+      }
+    })
+
+    t.field('deleteTask', {
+      type: 'Boolean',
+      args: {
+        data: arg({ type: 'DeleteTaskInput', required: true })
+      },
+      resolve: async (_, { data }, { db }) => {
+        const { categoryId, taskId } = data
+
+        try {
+          await db.Category.findByIdAndUpdate(categoryId, {
+            $pull: { tasks: taskId }
+          })
+
+          await db.Task.findByIdAndDelete(taskId)
+
+          return true
+        } catch (error) {
+          throw new DeleteTaskError()
+        }
       }
     })
   }
