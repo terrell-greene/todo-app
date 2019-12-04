@@ -58,7 +58,9 @@ const DashboardPage: NextPage<DashboardPageProps> = () => {
     user.categories.forEach(({ id, name, tasks }) => {
       if (categoryId && id !== categoryId) return
 
-      tasks.forEach(task => newTasks.push({ ...task, categoryName: name }))
+      tasks.forEach(task =>
+        newTasks.push({ ...task, categoryName: name, categoryId: id })
+      )
     })
 
     newTasks = newTasks.sort((a, b) => {
@@ -82,8 +84,11 @@ const DashboardPage: NextPage<DashboardPageProps> = () => {
             <Task key={task.id} task={task} />
           ))}
         </Content>
-        <Footer>
-          <a href="https://www.freepik.com/free-photos-vectors/background">
+        <Footer className="footer">
+          <a
+            href="https://www.freepik.com/free-photos-vectors/background"
+            target="_blank"
+          >
             Background vector created by freepik - www.freepik.com
           </a>
         </Footer>
