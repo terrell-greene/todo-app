@@ -76,7 +76,7 @@ const CreateCategory: React.FC<CreateCategoryProps> = ({ visible, close }) => {
       confirmLoading={loading}
       onCancel={close}
       okText="Submit"
-      forceRender={true}
+      centered
     >
       <div className="input-container">
         <input

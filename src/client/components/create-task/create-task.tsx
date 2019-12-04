@@ -111,6 +111,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({
       confirmLoading={loading}
       onCancel={close}
       okText="Submit"
+      centered
     >
       <div className="input-container">
         <DatePicker
