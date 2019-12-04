@@ -93,6 +93,7 @@ input UpdateCategoryInput {
 
 input UpdateTaskInput {
   completed: Boolean
+  date: DateTime
   description: String
   id: ID!
   rank: Int

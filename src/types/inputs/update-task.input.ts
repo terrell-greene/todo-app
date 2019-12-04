@@ -5,6 +5,7 @@ export const UpdateTaskInput = inputObjectType({
   definition(t) {
     t.id('id', { required: true })
     t.int('rank')
+    t.datetime('date')
     t.string('description')
     t.boolean('completed')
   }

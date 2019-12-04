@@ -55,6 +55,7 @@ export interface NexusGenInputs {
   }
   UpdateTaskInput: { // input type
     completed?: boolean | null; // Boolean
+    date?: any | null; // DateTime
     description?: string | null; // String
     id: string; // ID!
     rank?: number | null; // Int
