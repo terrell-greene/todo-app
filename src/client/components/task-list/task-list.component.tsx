@@ -25,21 +25,7 @@ const updateTasksMutation = gql`
 `
 
 const TaskList: React.FC<TaskListProps> = ({ tasks }) => {
-  const [updateTasks] = useMutation(updateTasksMutation, {
-    update: async (proxy, { data }) => {
-      const { user } = await proxy.readQuery<{
-        user: NexusGenRootTypes['User']
-      }>({ query: userCache })
-
-      user.categories.forEach(({ id, tasks }, index) => {
-        tasks.forEach(({ id }, taskIndex) => {
-          if (id === data.updateTasks[0].id) {
-            user.categories[index].tasks[taskIndex] = data.updateTasks[0]
-          }
-        })
-      })
-    }
-  })
+  const [updateTasks] = useMutation(updateTasksMutation)
 
   const onClick = (id: string, completed: boolean) => {
     const task = { id, completed: !completed }

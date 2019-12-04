@@ -5,21 +5,22 @@ import './floating-action-button.styles.scss'
 import CreateCategory from '../create-category/create-category'
 import CreateTask from '../create-task/create-task'
 import { NexusGenRootTypes } from '../../../generated'
+import { useQuery } from '@apollo/react-hooks'
+import { userCache } from '../../pages/dashboard'
 
-interface FloatingActionButtonProps {
-  categories: NexusGenRootTypes['Category'][]
-}
-
-const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
-  categories
-}) => {
+const FloatingActionButton: React.FC = () => {
   const [hovered, setHovered] = useState(false)
   const [createCategoryVisible, setCreateCategoryVisible] = useState(false)
   const [createTaskVisible, setCreateTaskVisible] = useState(false)
   const [errorVisible, setErrorVisible] = useState(false)
 
+  const {
+    data: {
+      user: { categories }
+    }
+  } = useQuery(userCache)
+
   const onCategoryClick = () => {
-    console.log('create category')
     setCreateCategoryVisible(true)
   }
 

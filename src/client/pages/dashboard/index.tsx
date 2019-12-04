@@ -58,25 +58,14 @@ export const userCache = gql`
   }
 `
 
-const DashboardPage: NextPage<DashboardPageProps> = ({ user }) => {
-  // resetServerContext()
-
-  const client = useApolloClient()
-
-  // useEffect(() => {
-  //   const subscription = client
-  //     .watchQuery({ query: userCache })
-  //     .subscribe(({ data }) => {
-  //       setUser(data.user)
-  //     })
-  //   return () => {
-  //     subscription.unsubscribe()
-  //   }
-  // }, [])
-
+const DashboardPage: NextPage<DashboardPageProps> = () => {
   const { query } = useRouter()
 
-  const [allTasks, setAllTasks] = useState<IClientTask[]>([])
+  const [filteredTasks, setFilteredTasks] = useState<IClientTask[]>([])
+
+  const {
+    data: { user }
+  } = useQuery(userCache)
 
   useEffect(() => {
     let newTasks: IClientTask[] = []
@@ -94,18 +83,18 @@ const DashboardPage: NextPage<DashboardPageProps> = ({ user }) => {
 
       return newA > newB ? 1 : newA < newB ? -1 : 0
     })
-    // console.log(newTasks)
-    setAllTasks(newTasks)
-  }, [user, query])
+
+    setFilteredTasks(newTasks)
+  }, [query])
 
   return (
     <Layout>
-      <Sidebar categories={user.categories} />
+      <Sidebar />
 
       <Layout className="layout">
         <Header className="header"></Header>
         <Content className="content">
-          <TaskList tasks={allTasks} />
+          <TaskList tasks={filteredTasks} />
         </Content>
         <Footer>
           <a href="https://www.freepik.com/free-photos-vectors/background">
@@ -114,7 +103,7 @@ const DashboardPage: NextPage<DashboardPageProps> = ({ user }) => {
         </Footer>
       </Layout>
 
-      <FloatingActionButton categories={user.categories} />
+      <FloatingActionButton />
     </Layout>
   )
 }

@@ -2,8 +2,10 @@ import { Modal } from 'antd'
 import { useState } from 'react'
 import gql from 'graphql-tag'
 import { useMutation, useApolloClient } from '@apollo/react-hooks'
+import { useRouter } from 'next/router'
 import { NexusGenRootTypes } from '../../../generated'
 import { userCache } from '../../pages/dashboard'
+import { format } from 'url'
 
 const createCategoryMutation = gql`
   mutation CreateCategory($name: String!) {
@@ -27,7 +29,7 @@ interface CreateCategoryProps {
 }
 
 const CreateCategory: React.FC<CreateCategoryProps> = ({ visible, close }) => {
-  const client = useApolloClient()
+  const router = useRouter()
   const [categoryName, setCategoryName] = useState('')
   const [error, setError] = useState(null)
 
@@ -40,8 +42,13 @@ const CreateCategory: React.FC<CreateCategoryProps> = ({ visible, close }) => {
       user.categories.push(data.createCategory)
 
       proxy.writeQuery({ query: userCache, data: { user } })
+    },
+    onCompleted: () => {
+      const { pathname, query } = router
+      const url = format({ pathname, query })
 
-      // updateUser(user)
+      setCategoryName('')
+      router.push(url)
     }
   })
 

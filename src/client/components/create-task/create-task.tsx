@@ -5,6 +5,8 @@ import { useMutation, useApolloClient } from '@apollo/react-hooks'
 import { NexusGenRootTypes } from '../../../generated'
 import { userCache } from '../../pages/dashboard'
 import moment from 'moment'
+import { useRouter } from 'next/router'
+import { format } from 'url'
 
 const { Option } = Select
 const { TextArea } = Input
@@ -38,13 +40,13 @@ const CreateTask: React.FC<CreateTaskProps> = ({
   close,
   categories
 }) => {
+  const router = useRouter()
   const [descriptionValue, setDescriptionValue] = useState('')
   const [descriptionError, setDescriptionError] = useState(null)
 
   const [date, setDate] = useState(new Date())
-  const [categoryId, setCategoryId] = useState(
-    categories.length > 0 ? categories[0].id : null
-  )
+  const [categoryId, setCategoryId] = useState(null)
+  const [categoryIdError, setCategoryIdError] = useState(null)
 
   const [createTask, { loading }] = useMutation(createTaskMutation, {
     update: async (proxy, { data }) => {
@@ -57,6 +59,18 @@ const CreateTask: React.FC<CreateTaskProps> = ({
           user.categories[index].tasks.push(data.createTask)
         }
       })
+
+      proxy.writeQuery({ query: userCache, data: { user } })
+    },
+    onCompleted: () => {
+      const { pathname, query } = router
+      const url = format({ pathname, query })
+
+      setDate(new Date())
+      setCategoryId(categories[0].id)
+      setDescriptionValue('')
+
+      router.push(url)
     }
   })
 
@@ -72,6 +86,13 @@ const CreateTask: React.FC<CreateTaskProps> = ({
       valid = false
     } else {
       setDescriptionError(null)
+    }
+
+    if (!categoryId) {
+      setCategoryIdError('Category is required')
+      valid = false
+    } else {
+      setCategoryIdError(null)
     }
 
     if (valid) {
@@ -102,10 +123,10 @@ const CreateTask: React.FC<CreateTaskProps> = ({
       </div>
       <div className="input-container">
         <Select
-          defaultValue={categoryId}
           style={{ width: '100%' }}
           size="large"
           onChange={onSelectChange}
+          placeholder="Select a category"
         >
           {categories.map(({ id, name }) => (
             <Option key={id} value={id}>
@@ -113,6 +134,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({
             </Option>
           ))}
         </Select>
+        <div className="error">{categoryIdError}</div>
       </div>
 
       <TextArea
