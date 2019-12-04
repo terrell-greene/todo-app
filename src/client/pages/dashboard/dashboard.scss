@@ -22,3 +22,16 @@
   overflow: scroll;
   // height: 500px;
 }
+
+.footer {
+  background-color: #0e2859;
+  font-size: 1.1rem;
+  color: $color-white;
+
+  a {
+    color: inherit;
+  }
+  @media screen and (min-width: 768px) {
+    font-size: 1.5rem;
+  }
+}
