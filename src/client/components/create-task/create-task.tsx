@@ -44,7 +44,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({
   const [descriptionValue, setDescriptionValue] = useState('')
   const [descriptionError, setDescriptionError] = useState(null)
 
-  const [date, setDate] = useState(new Date())
+  const [date, setDate] = useState(moment(new Date()))
   const [categoryId, setCategoryId] = useState(null)
   const [categoryIdError, setCategoryIdError] = useState(null)
 
@@ -66,7 +66,7 @@ const CreateTask: React.FC<CreateTaskProps> = ({
       const { pathname, query } = router
       const url = format({ pathname, query })
 
-      setDate(new Date())
+      setDate(moment(new Date()))
       setCategoryId(categories[0].id)
       setDescriptionValue('')
 
@@ -117,8 +117,8 @@ const CreateTask: React.FC<CreateTaskProps> = ({
         <DatePicker
           name="date"
           size="large"
-          value={moment(date)}
-          onChange={(moment, date) => setDate(new Date(date))}
+          value={date}
+          onChange={(moment, date) => setDate(moment)}
           format={'MM-DD-YYYY'}
         />
       </div>
