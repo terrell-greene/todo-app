@@ -80,7 +80,11 @@ const EditTask: React.FC<EditTaskProps> = ({ visible, close, task }) => {
     }
 
     if (valid) {
-      const updatedTask = { id: task.id, date, description: descriptionValue }
+      const updatedTask = {
+        id: task.id,
+        date: moment(date).toDate(),
+        description: descriptionValue
+      }
       await updateTasks({
         variables: { tasks: [updatedTask] }
       })

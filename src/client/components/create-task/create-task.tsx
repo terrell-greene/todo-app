@@ -97,7 +97,11 @@ const CreateTask: React.FC<CreateTaskProps> = ({
 
     if (valid) {
       await createTask({
-        variables: { categoryId, date, description: descriptionValue }
+        variables: {
+          categoryId,
+          date: moment(date).toDate(),
+          description: descriptionValue
+        }
       })
       close()
     }
