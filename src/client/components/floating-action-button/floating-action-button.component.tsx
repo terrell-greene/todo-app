@@ -43,7 +43,7 @@ const FloatingActionButton: React.FC = () => {
     <div className="floating-action-button">
       <Popover
         content={hoverContent}
-        trigger="hover"
+        trigger="click"
         visible={hovered}
         onVisibleChange={() => setHovered(!hovered)}
       >
