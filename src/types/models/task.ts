@@ -7,6 +7,6 @@ export const Task = objectType({
     t.int('rank')
     t.string('description')
     t.boolean('completed')
-    t.date('date')
+    t.datetime('date')
   }
 })

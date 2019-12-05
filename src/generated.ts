@@ -82,7 +82,7 @@ export interface NexusGenRootTypes {
   Query: {};
   Task: { // root type
     completed: boolean; // Boolean!
-    date: any; // Date!
+    date: any; // DateTime!
     description: string; // String!
     id: string; // ID!
     rank: number; // Int!
@@ -143,7 +143,7 @@ export interface NexusGenFieldTypes {
   }
   Task: { // field return type
     completed: boolean; // Boolean!
-    date: any; // Date!
+    date: any; // DateTime!
     description: string; // String!
     id: string; // ID!
     rank: number; // Int!

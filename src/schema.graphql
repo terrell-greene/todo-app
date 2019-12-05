@@ -80,7 +80,7 @@ input SignUpInput {
 
 type Task {
   completed: Boolean!
-  date: Date!
+  date: DateTime!
   description: String!
   id: ID!
   rank: Int!
