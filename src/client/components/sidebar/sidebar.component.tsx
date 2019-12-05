@@ -5,10 +5,19 @@ import CategoryLinks from '../category-links/category-links.component'
 import { userCache } from '../../pages/dashboard'
 
 import './sidebar.styles.scss'
+import moment, { Moment } from 'moment'
+
+interface SidebarProps {
+  onCalendarSelect: (value: Moment) => void
+  selectedDate: Date
+}
 
 const { Sider } = Layout
 
-const Sidebar: React.FC = () => {
+const Sidebar: React.FC<SidebarProps> = ({
+  onCalendarSelect,
+  selectedDate
+}) => {
   const {
     data: {
       user: { categories }
@@ -27,7 +36,11 @@ const Sidebar: React.FC = () => {
         <CategoryLinks categories={categories} />
 
         <div className="calendar-container">
-          <Calendar fullscreen={false} />
+          <Calendar
+            fullscreen={false}
+            onSelect={onCalendarSelect}
+            value={moment(selectedDate)}
+          />
         </div>
       </div>
     </Sider>

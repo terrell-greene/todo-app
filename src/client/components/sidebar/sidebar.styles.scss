@@ -1,10 +1,12 @@
 @import '../../sass/main';
 
 .sider {
+  border-right: 1px solid $color-grey;
   overflow: auto;
   display: flex;
   flex-direction: column;
   height: 100vh;
+  padding-top: 4rem;
   // width: 450px;
   // position: fixed;
   // left: 0;
