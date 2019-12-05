@@ -8,19 +8,59 @@
   // }
 
   .header {
-    padding-left: 1rem;
+    padding-left: 2rem;
     font-size: 1.8rem;
     background-image: url('/background.jpg');
     height: 200px;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+
+    .select {
+      width: 20rem;
+      margin-bottom: 2rem;
+    }
+
+    .icon {
+      cursor: pointer;
+
+      &.left {
+        margin-right: 1rem;
+      }
+
+      &.right {
+        margin-left: 1rem;
+      }
+    }
+
+    h1 {
+      color: inherit;
+      margin: 0;
+      padding: 0;
+      font-size: 4rem;
+    }
+
+    p {
+      font-size: 2rem;
+      margin: 0;
+      padding: 0;
+    }
   }
 }
 
 .content {
   overflow: scroll;
+  display: flex;
+  flex-direction: column;
   // height: 500px;
+
+  .empty {
+    margin: auto;
+  }
 }
 
 .footer {

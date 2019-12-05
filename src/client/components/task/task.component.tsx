@@ -61,8 +61,7 @@ const Task: NextPage<TaskProps> = ({ task }) => {
           {task.description}
         </span>
         <span className="category-name">
-          {task.categoryName} -{' '}
-          {moment(new Date(task.date)).format('MM/DD/YYYY')}
+          {task.categoryName} - {moment(task.date).format('MM/DD/YYYY')}
         </span>
       </div>
 

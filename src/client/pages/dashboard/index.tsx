@@ -1,5 +1,5 @@
 import { NextPage } from 'next'
-import { Layout } from 'antd'
+import { Layout, Icon, Empty, Select } from 'antd'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import gql from 'graphql-tag'
@@ -15,12 +15,14 @@ import FloatingActionButton from '../../components/floating-action-button/floati
 import Task from '../../components/task/task.component'
 
 import './dashboard.scss'
+import moment, { Moment } from 'moment'
 
 interface DashboardPageProps {
   user: NexusGenRootTypes['User']
 }
 
 const { Header, Content, Footer } = Layout
+const { Option } = Select
 
 export const userCache = gql`
   query {
@@ -43,13 +45,31 @@ export const userCache = gql`
 `
 
 const DashboardPage: NextPage<DashboardPageProps> = () => {
+  const dateFormat = 'ddd, MMMM Do'
   const { query } = useRouter()
 
   const [filteredTasks, setFilteredTasks] = useState<IClientTask[]>([])
+  const [filter, setFilter] = useState('all')
+  const [currentCategory, setCurrentCategory] = useState('My Day')
+  const [selectedDate, setSelectedDate] = useState(new Date())
 
   const {
     data: { user }
-  } = useQuery(userCache)
+  } = useQuery<{ user: NexusGenRootTypes['User'] }>(userCache)
+
+  useEffect(() => {
+    const { categoryId } = query
+
+    if (!categoryId) {
+      setCurrentCategory('My Day')
+    } else {
+      user.categories.forEach(category => {
+        if (categoryId === category.id) {
+          setCurrentCategory(category.name)
+        }
+      })
+    }
+  }, [query])
 
   useEffect(() => {
     let newTasks: IClientTask[] = []
@@ -58,31 +78,85 @@ const DashboardPage: NextPage<DashboardPageProps> = () => {
     user.categories.forEach(({ id, name, tasks }) => {
       if (categoryId && id !== categoryId) return
 
-      tasks.forEach(task =>
-        newTasks.push({ ...task, categoryName: name, categoryId: id })
-      )
-    })
-
-    newTasks = newTasks.sort((a, b) => {
-      const newA = new Date(a.date)
-      const newB = new Date(b.date)
-
-      return newA > newB ? 1 : newA < newB ? -1 : 0
+      tasks.forEach(task => {
+        if (moment(task.date).date() !== moment(selectedDate).date()) return
+        console.log(task.completed)
+        if (filter === 'complete' && task.completed === true) {
+          newTasks.push({ ...task, categoryName: name, categoryId: id })
+          return
+        } else if (filter === 'incomplete' && task.completed === false) {
+          newTasks.push({ ...task, categoryName: name, categoryId: id })
+          return
+        } else if (filter === 'all') {
+          newTasks.push({ ...task, categoryName: name, categoryId: id })
+        }
+      })
     })
 
     setFilteredTasks(newTasks)
-  }, [user, query])
+  }, [user, query, selectedDate, filter])
+
+  const onLeftClick = () => {
+    const newDate = moment(selectedDate)
+      .subtract(1, 'day')
+      .toDate()
+
+    setSelectedDate(newDate)
+  }
+
+  const onRightClick = () => {
+    const newDate = moment(selectedDate)
+      .add(1, 'day')
+      .toDate()
+
+    setSelectedDate(newDate)
+  }
+
+  const onCalendarSelect = (value: Moment) => {
+    setSelectedDate(value.toDate())
+  }
 
   return (
     <Layout>
-      <Sidebar />
+      <Sidebar
+        selectedDate={selectedDate}
+        onCalendarSelect={onCalendarSelect}
+      />
 
       <Layout className="layout">
-        <Header className="header"></Header>
+        <Header className="header">
+          <div>
+            <h1>{currentCategory}</h1>
+            <p>
+              <Icon className="icon left" type="left" onClick={onLeftClick} />
+              {moment(selectedDate).format(dateFormat)}
+              <Icon
+                className="icon right"
+                type="right"
+                onClick={onRightClick}
+              />
+            </p>
+          </div>
+
+          <Select
+            className="select"
+            defaultValue="all"
+            onSelect={value => setFilter(value)}
+          >
+            <Option value="all">Show all</Option>
+            <Option value="incomplete">Show imcomplete</Option>
+            <Option value="complete">Show complete</Option>
+          </Select>
+        </Header>
         <Content className="content">
-          {filteredTasks.map(task => (
-            <Task key={task.id} task={task} />
-          ))}
+          {filteredTasks.length === 0 ? (
+            <Empty
+              className="empty"
+              description="No tasks scheduled for this date"
+            />
+          ) : (
+            filteredTasks.map(task => <Task key={task.id} task={task} />)
+          )}
         </Content>
         <Footer className="footer">
           <a
