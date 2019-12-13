@@ -66,6 +66,8 @@ const CreateTask: React.FC<CreateTaskProps> = ({
       const { pathname, query } = router
       const url = format({ pathname, query })
 
+      close()
+
       setDate(moment(new Date()))
       setCategoryId(categories[0].id)
       setDescriptionValue('')
@@ -103,7 +105,6 @@ const CreateTask: React.FC<CreateTaskProps> = ({
           description: descriptionValue
         }
       })
-      close()
     }
   }
 
